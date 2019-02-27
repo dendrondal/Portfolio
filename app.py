@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 
 app = Flask(__name__)
@@ -18,35 +18,34 @@ def main_page():
     return render_template('index.html', data=rows)
 
 
-@app.route('/projects/localvore', methods=['GET', 'POST'])
-def localvore():
-    return render_template('/projects/localvore.html', curTitle='Localvore',
-                           curSummary='Menu planner helping people eat locally and minimize food waste.')
+@app.route('/new-post', methods=['POST'])
+def new_post():
+    conn = sqlite3.connect('posts.sqlite')
+    c = conn.cursor()
+    data = request.get_json()
+    title = data['title']
+    description = data['description']
+    symlink = data['symlink']
+    thumb = data['thumbnail']
+    tags = data['tags']
+    content = data['content']
+    try:
+        c.execute('INSERT INTO Posts VALUES(?, ?, ?, ?, ?, ?)',
+                  (title, description, symlink, thumb, tags, content))
+    except Exception as e:
+        return e
+    conn.commit()
+    conn.close()
+    return 'Success!'
 
 
-@app.route('/projects/thoughts_on_reproducibility', methods=['GET', 'POST'])
-def thoughts_on_reproducibility():
-    return render_template('/projects/thoughts_on_reproducibility.html', curTitle='Thoughts on Reproducibility',
-                           curSummary='Outlining current approaches to reproducibility in data science')
-
-
-@app.route('/projects/this_website', methods=['GET', 'POST'])
-def this_website():
-    return render_template('/projects/this_website.html', curTitle='This website',
-                           curSummary='How this website was made!')
-
-
-@app.route('/projects/predicting_semiconductor_properties', methods=['GET', 'POST'])
-def predicting_semiconductor_properties():
-    return render_template('/projects/predicting_semiconductor_properties.html',
-                           curTitle='Predicting Semiconductor Properties',
-                           curSummary='Kaggle competition predicting semiconductor performance from X-ray crystal data.')
-
-
-@app.route('/pages/deploying_a_kaggle_model', methods=['GET', 'POST'])
-def deploying_a_kaggle_model():
-    return render_template('/pages/deploying_a_kaggle_model.html', curTitle='Deploying a Kaggle Model',
-                           curSummary='How to make a RESTful API from a previously constructed ML model')
+@app.route('/blog/<post>')
+def render_post(post):
+    conn = sqlite3.connect('posts.sqlite')
+    c = conn.cursor()
+    url = f'/blog/{post}'
+    c.execute('SELECT * FROM Posts WHERE symlink IS ?', (url,))
+    return render_template('post.html', data=c.fetchone())
 
 
 if __name__ == '__main__':
