@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../Portfolio/.idea/Portfolio.iml" filepath="$PROJECT_DIR$/../Portfolio/.idea/Portfolio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Localvore/.idea/Localvore.iml" filepath="$PROJECT_DIR$/../Localvore/.idea/Localvore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Portfolio.iml" filepath="$PROJECT_DIR$/.idea/Portfolio.iml" />
     </modules>
   </component>
 </project>
