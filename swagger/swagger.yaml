@@ -1,0 +1,133 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0"
+  title: "Portfolio Content Management"
+  license:
+    name: "Appoache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: "/posts"
+tags:
+- name: "public"
+  description: "Operations available to regular developers"
+- name: "admins"
+  description: "Secured Admin-only calls"
+schemes:
+- "http"
+paths:
+  /new_post:
+    post:
+      tags:
+      - "admins"
+      operationId: "src.controllers.api_posts_new_post"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "Payload"
+        description: "Create new post"
+        required: false
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        201:
+          description: "Successfully submitted post"
+        400:
+          description: "Invalid input"
+        409:
+          description: "Title already in use"
+      security:
+      - basicAuth: []
+  /update_post:
+    put:
+      tags:
+      - "admins"
+      operationId: "src.controllers.api_posts_update_post"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "Payload"
+        description: "Edit existing post"
+        required: false
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        201:
+          description: "Successfully edited post"
+        400:
+          description: "Invalid input, object invalid"
+        404:
+          description: "No posts found with that title"
+      security:
+      - basicAuth: []
+
+  /{title}:
+    get:
+      tags:
+      - "public"
+      operationId: "src.controllers.api_posts_read_post"
+      parameters:
+      - name: "title"
+        in: "path"
+        description: "Post to render."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "See JSON behind blog post"
+          schema:
+            $ref: "#/definitions/Post"
+
+  /delete/{title}:
+    delete:
+      tags:
+      - "admins"
+      operationId: "src.controllers.api_posts_delete_post"
+      parameters:
+      - name: "title"
+        in: "path"
+        description: "Post to delete."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successfully deleted product"
+        400:
+          description: "invalid input, object invalid"
+        401:
+          description: "Not correctly authorized"
+        409:
+          description: "conflict error"
+      security:
+      - basicAuth: []
+securityDefinitions:
+  basicAuth:
+    type: "basic"
+definitions:
+  Post:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+      description:
+        type: "string"
+      symlink:
+        type: "string"
+      thumbnail:
+        type: "string"
+      tags:
+        type: "string"
+      content:
+        type: "string"
+    example:
+      thumbnail: "thumbnail"
+      symlink: "symlink"
+      description: "description"
+      title: "title"
+      content: "content"
+      tags: "tags"
