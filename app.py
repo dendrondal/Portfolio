@@ -4,7 +4,7 @@ from models import BlogPost
 
 
 app = connex_app
-app.add_api("core.yaml")
+app.add_api("swagger.yaml")
 
 
 @app.route('/')

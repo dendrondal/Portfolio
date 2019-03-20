@@ -4,7 +4,7 @@ import connexion
 from pathlib import Path
 
 
-connex_app = connexion.App(__name__, specification_dir='../core/')
+connex_app = connexion.App(__name__, specification_dir='.')
 app = connex_app.app
 
 database_uri = f'sqlite:////{Path(__file__).parents[1]}/posts.sqlite'

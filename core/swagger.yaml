@@ -40,31 +40,19 @@ paths:
           description: "Title already in use"
       security:
       - basicAuth: []
-  /update_post:
-    put:
+
+  /get_all:
+    get:
       tags:
-      - "admins"
-      operationId: "controllers.api_posts_update_post"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "Payload"
-        description: "Edit existing post"
-        required: false
-        schema:
-          $ref: "#/definitions/Post"
+        - "public"
+      operationId: "controllers.api_posts_read_all"
+      summary: "View full all posts currently live"
+      description: "View full all posts currently live"
       responses:
-        201:
-          description: "Successfully edited post"
-        400:
-          description: "Invalid input, object invalid"
-        404:
-          description: "No posts found with that title"
-      security:
-      - basicAuth: []
+        200:
+          description: "Successfully queryed backend"
+          schema:
+            $ref: "#/definitions/Post"
 
   /{title}:
     get:
@@ -82,8 +70,33 @@ paths:
           description: "See JSON behind blog post"
           schema:
             $ref: "#/definitions/Post"
+    put:
+      tags:
+        - "admins"
+      operationId: "controllers.api_posts_update_post"
+      description: "Update a post"
+      parameters:
+        - in: "body"
+          name: "Payload"
+          description: "Post body to edit"
+          required: True
+          schema:
+            $ref: "#/definitions/Post"
+        - in: "path"
+          name: title
+          description: "Post to update"
+          required: true
+          type: "string"
+      responses:
+        201:
+          description: "Successfully edited post"
+        400:
+          description: "Invalid input, object invalid"
+        404:
+          description: "No posts found with that title"
+      security:
+        - basicAuth: []
 
-  /delete/{title}:
     delete:
       tags:
       - "admins"
