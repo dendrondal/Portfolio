@@ -1,6 +1,6 @@
 from flask import abort
-from src.config import db
-from src.models import BlogPost, PostSchema
+from core import db
+from models import BlogPost, PostSchema
 
 
 def api_posts_read_post(title):  # noqa: E501
@@ -70,6 +70,9 @@ def api_posts_new_post(Payload=None):  # noqa: E501
         abort(409, f'{title} already exists!')
 
 
-def say_hello():
-    return {'message': 'Hello World!'}
+def basic_auth(username, password, required_scopes=None):
+    if username == 'admin' and password == 'secret':
+        return {'sub': 'admin'}
+    else:
+        abort(403, "Incorrect username or password")
 

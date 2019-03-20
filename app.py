@@ -1,15 +1,17 @@
-from flask import render_template,
-from .config import connex_app
-from .models import BlogPost
+from flask import render_template
+from core import connex_app
+from models import BlogPost
+
 
 app = connex_app
-app.add_api("swagger.yaml")
+app.add_api("core.yaml")
 
 
 @app.route('/')
 def main_page():
     pages = BlogPost.query.all()
     rows = [pages[i:i + 3] for i in range(0, len(pages), 3)]
+    print(rows)
     return render_template('index.html', data=rows)
 
 

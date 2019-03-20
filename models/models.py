@@ -1,4 +1,4 @@
-from src.config import db, ma
+from core import db, ma
 
 
 class BlogPost(db.Model):

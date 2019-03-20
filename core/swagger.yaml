@@ -19,7 +19,7 @@ paths:
     post:
       tags:
       - "admins"
-      operationId: "src.controllers.api_posts_new_post"
+      operationId: "controllers.api_posts_new_post"
       consumes:
       - "application/json"
       produces:
@@ -44,7 +44,7 @@ paths:
     put:
       tags:
       - "admins"
-      operationId: "src.controllers.api_posts_update_post"
+      operationId: "controllers.api_posts_update_post"
       consumes:
       - "application/json"
       produces:
@@ -70,7 +70,7 @@ paths:
     get:
       tags:
       - "public"
-      operationId: "src.controllers.api_posts_read_post"
+      operationId: "controllers.api_posts_read_post"
       parameters:
       - name: "title"
         in: "path"
@@ -87,7 +87,7 @@ paths:
     delete:
       tags:
       - "admins"
-      operationId: "src.controllers.api_posts_delete_post"
+      operationId: "controllers.api_posts_delete_post"
       parameters:
       - name: "title"
         in: "path"
@@ -108,6 +108,7 @@ paths:
 securityDefinitions:
   basicAuth:
     type: "basic"
+    x-basicInfoFunc: controllers.basic_auth
 definitions:
   Post:
     type: "object"
