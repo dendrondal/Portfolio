@@ -1,5 +1,5 @@
-from flask import render_template
-from core import connex_app
+from flask import render_template, request
+from core.config import connex_app
 from models import BlogPost
 
 
@@ -17,8 +17,9 @@ def main_page():
 
 @app.route('/blog/<post>')
 def render_post(post):
-    page = BlogPost.query.filter(BlogPost.title == post)
-    return render_template('post.html', data=page)
+    page = BlogPost.query.filter(BlogPost.symlink == f'/blog/{post}').first()
+    return render_template('post.html', data=page.__dict__)
+
 
 
 if __name__ == '__main__':

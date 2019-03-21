@@ -80,17 +80,37 @@ div.column {
     padding: 5px;
 }
 
+div.post {
+	padding: 4px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: whitesmoke;
+	border-radius: 5px;
+}
+
 /* Clear floats after image containers */
 div.row::after {
     content: "";
     clear: both;
-    display: table;
+    display: flex;
+	justify-content: space-between;
 }
 
-div.profile-image {
+img.profile-image {
     position: relative;
     height: auto;
     width: auto;
+	border-radius: 50%;
+}
+
+div.thumbnail {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	position: relative;
+	overflow: hidden;
+	display: block;
+	margin: 0 auto;
 }
 
 /* Basic */
@@ -657,7 +677,10 @@ div.profile-image {
 
 		.image img {
 			border-radius: 4px;
-			display: block;
+			display: flex;
+			width: auto;
+			height: auto;
+
 		}
 
 		.image.left, .image.right {

@@ -4,7 +4,7 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<html>
+<html xmlns:alignment="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>Dal</title>
 		<meta charset="utf-8" />
@@ -21,7 +21,7 @@
 				<!-- Header -->
 					<header id="header">
 						<div class="profile-image">
-                            <img src="../static/images/headshot.jpg" alt>
+                            <img src="../static/images/headshot.jpg" alt class="profile-image">
 						</div>
 						<div class="content">
 							<div class="inner">
@@ -74,8 +74,10 @@
 
                                                 <a href={{page['symlink']}}>
                                                     <div class="post">
-                                                        <img style="width:90%; height: 90%; margin-left: 5%; margin-top: 5%; margin-bottom: 5%;" src={{ page['thumbnail'] }} alt>
-                                                        <h3 style="margin-top:0; font-size:95%;">{{page['title']}}</h3>
+                                                        <div class="thumbnail">
+                                                            <img style="width:150px; height:150px; margin-left: 5%; margin-top: 5%; margin-bottom: 5%;" src={{ page['thumbnail'] }} alt>
+                                                        </div>
+                                                        <h3 style="margin-top:0; font-size:95%; alignment: center">{{page['title']}}</h3>
                                                         <h4 style=font-size:60%>{{ page['description'] }}</h4>
                                                     </div>
                                                 </a>
@@ -95,7 +97,7 @@
 						<!-- Contact -->
 							<article id="contact">
 								<h2 class="major">Contact</h2>
-								<form method="post" action="mailto:dendrondal@protonmail.com">
+								<form method="post" action={{ url_for('send_email') }}>
 									<div class="fields">
 										<div class="field half">
 											<label for="name">Name</label>
@@ -127,7 +129,7 @@
 
 				<!-- Footer -->
 					<footer id="footer">
-						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						<p class="copyright">&copy; Dal Williams, 2019. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
 					</footer>
 
 			</div>

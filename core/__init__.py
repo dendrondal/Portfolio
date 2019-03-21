@@ -1,1 +1,1 @@
-from .config import connex_app, db, ma
+from .config import connex_app, app, db, ma
