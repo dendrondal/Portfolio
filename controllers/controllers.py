@@ -1,6 +1,7 @@
 from flask import abort, make_response
 from core import db
 from models import BlogPost, PostSchema
+import os
 
 
 def api_posts_read_all():
@@ -107,7 +108,7 @@ def api_posts_new_post(Payload=None):  # noqa: E501
 
 
 def basic_auth(username, password, required_scopes=None):
-    if username == 'admin' and password == 'secret':
+    if username == os.environ.get('USERNAME') and password == os.environ.get('PASSWORD'):
         return {'sub': 'admin'}
     else:
         abort(403, "Incorrect username or password")
