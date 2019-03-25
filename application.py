@@ -10,7 +10,7 @@ application = connex_app
 application.add_api("swagger.yaml")
 
 
-@app.route('/')
+@application.route('/')
 def main_page():
     pages = BlogPost.query.all()
     rows = [pages[i:i + 3] for i in range(0, len(pages), 3)]
@@ -18,13 +18,13 @@ def main_page():
     return render_template('index.html', data=rows)
 
 
-@app.route('/blog/<post>')
+@application.route('/blog/<post>')
 def render_post(post):
     page = BlogPost.query.filter(BlogPost.symlink == f'/blog/{post}').first()
     return render_template('post.html', data=page.__dict__)
 
 
-@app.route('/send_email', methods=['POST'])
+@application.route('/send_email', methods=['POST'])
 def send_email():
     flask_app.config.update(mail_config)
     mail = Mail(flask_app)
