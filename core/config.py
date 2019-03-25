@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import connexion
 from pathlib import Path
-
+import os
 
 connex_app = connexion.App(__name__, specification_dir='.')
 app = connex_app.app
@@ -17,14 +17,10 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 
-class Config:
-    DEBUG = True
-    DEVELOPMENT = True
-    SQLALCHEMY_DATABASE_URI = database_uri
-    SQLALCHEMY_ECHO = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-
-class Production(Config):
-    DEVELOPMENT = False
-    DEBUG = False
+mail_config = {
+    "MAIL_SERVER": "smtp.gmail.com",
+    "MAIL_PORT": 405,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME": os.environ.get('GMAIL'),
+    "MAIL_PASSWORD": os.environ.get('GMAIL_PASS')
+}
