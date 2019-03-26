@@ -8,7 +8,7 @@ cffi==1.12.2
 chardet==3.0.4
 Click==7.0
 clickclick==1.2.2
-connexion==2.0.2
+connexion[swagger-ui]==2.0.2
 decorator==4.3.2
 entrypoints==0.3
 Flask==1.0.2
