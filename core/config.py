@@ -19,7 +19,7 @@ ma = Marshmallow(app)
 
 mail_config = {
     "MAIL_SERVER": "smtp.gmail.com",
-    "MAIL_PORT": 405,
+    "MAIL_PORT": 465,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": os.environ.get('GMAIL'),
     "MAIL_PASSWORD": os.environ.get('GMAIL_PASS')

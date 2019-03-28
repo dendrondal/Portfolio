@@ -97,6 +97,7 @@
 						<!-- Contact -->
 							<article id="contact">
 								<h2 class="major">Contact</h2>
+                                {{ flash }}
 								<form method="post" action={{ url_for('send_email') }}>
 									<div class="fields">
 										<div class="field half">

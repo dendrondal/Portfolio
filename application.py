@@ -14,7 +14,6 @@ application.add_api("swagger.yaml")
 def main_page():
     pages = BlogPost.query.all()
     rows = [pages[i:i + 3] for i in range(0, len(pages), 3)]
-    print(rows)
     return render_template('index.html', data=rows)
 
 
@@ -26,17 +25,20 @@ def render_post(post):
 
 @application.route('/send_email', methods=['POST'])
 def send_email():
+    print(mail_config)
     flask_app.config.update(mail_config)
     mail = Mail(flask_app)
+    print(type(mail))
     sender = request.form['email']
     name = request.form['name']
     body = request.form['message']
+    print(sender, body, name)
     msg = Message(subject=f'Website inquiry from {name}',
                   sender=sender,
                   recipients=[os.environ.get('EMAIL')],
                   body=body)
     mail.send(msg)
-    return "Success! Expect a response within 48 hours."
+    return "Thank you for reaching out. Expect a response within 48 hours."
 
 
 if __name__ == '__main__':
