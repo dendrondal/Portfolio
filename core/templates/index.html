@@ -67,11 +67,8 @@
 							<article id="work">
                                 <h2 class="major">Blog</h2>
                                     <div class="fa-border" style="width: 100%"></div>
-                                        {%  for chunk in data %}
-                                        <div class="row">
-                                            {%  for page in chunk %}
-                                            <div class="column">
-
+                                        <div class="ls">
+                                            {%  for page in data %}
                                                 <a href={{page['symlink']}}>
                                                     <div class="post">
                                                         <div class="thumbnail">
@@ -81,11 +78,8 @@
                                                         <h4 style=font-size:60%>{{ page['description'] }}</h4>
                                                     </div>
                                                 </a>
-
-                                            </div>
                                             {%  endfor %}
                                         </div>
-                                        {%  endfor %}
                             </article>
 						<!-- About -->
 							<article id="about">

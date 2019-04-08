@@ -13,7 +13,7 @@ application.add_api("swagger.yaml")
 @application.route('/')
 def main_page():
     pages = BlogPost.query.all()
-    rows = [pages[i:i + 3] for i in range(0, len(pages), 3)]
+    rows = [page.__dict__ for page in pages]
     return render_template('index.html', data=rows)
 
 

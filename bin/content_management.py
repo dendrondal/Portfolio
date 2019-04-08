@@ -31,8 +31,8 @@ def add_entry(title, description, thumb, tags, path):
     entry['tags'] = tags
     with open(path, 'r') as rf:
         entry['content'] = rf.read()
-    with open(f'./static/pages/{title}.json', 'w') as wf:
-        json.dump(spaceless_title, wf)
+    with open(f'core/static/pages/{spaceless_title}.json', 'w') as wf:
+        json.dump(entry, wf)
 
 
 
