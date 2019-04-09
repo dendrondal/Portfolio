@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import render_template, request, send_file
 from core import connex_app, mail_config
 from core import app as flask_app
 from models import BlogPost
@@ -39,6 +39,13 @@ def send_email():
                   body=body)
     mail.send(msg)
     return "Thank you for reaching out. Expect a response within 48 hours."
+
+
+@application.route('/download_resume')
+def download_resume():
+    return send_file('static/pages/Williams_Resume.pdf',
+                     as_attachment=True,
+                     attachment_filename='Williams_Resume.pdf')
 
 
 if __name__ == '__main__':
