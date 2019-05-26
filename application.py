@@ -1,52 +1,46 @@
 from flask import render_template, request, send_file
-from core import connex_app, mail_config
-from core import app as flask_app
-from models import BlogPost
+from flask_frozen import Freezer
 from flask_mail import Message, Mail
-import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+from flask import Flask
+from flask_flatpages import FlatPages
+import connexion
+from pathlib import Path
+import sys
+
+app = Flask(__name__)
+app.config.from_pyfile('settings.cfg')
+pages = FlatPages(app)
+freezer = Freezer(app)
 
 
-application = connex_app
-application.add_api("swagger.yaml")
-
-
-@application.route('/')
+@app.route('/')
 def main_page():
-    pages = BlogPost.query.all()
-    rows = [page.__dict__ for page in pages]
-    return render_template('index.html', data=rows)
+    print([page.meta for page in pages])
+    return render_template('index.html', pages=pages)
 
 
-@application.route('/blog/<post>')
-def render_post(post):
-    page = BlogPost.query.filter(BlogPost.symlink == f'/blog/{post}').first()
-    return render_template('post.html', data=page.__dict__)
+@app.route('/<path:path>/')
+def render_post(path):
+    page = pages.get_or_404(path)
+    return render_template('post.html', page=page)
 
 
-@application.route('/send_email', methods=['POST'])
-def send_email():
-    print(mail_config)
-    flask_app.config.update(mail_config)
-    mail = Mail(flask_app)
-    print(type(mail))
-    sender = request.form['email']
-    name = request.form['name']
-    body = request.form['message']
-    print(sender, body, name)
-    msg = Message(subject=f'Website inquiry from {name}',
-                  sender=sender,
-                  recipients=[os.environ.get('EMAIL')],
-                  body=body)
-    mail.send(msg)
-    return "Thank you for reaching out. Expect a response within 48 hours."
+@app.route('/intro/')
+def intro():
+    return render_template('intro.html')
 
 
-@application.route('/download_resume')
+@app.route('/download_resume')
 def download_resume():
-    return send_file('static/pages/Williams_Resume.pdf',
+    return send_file('Williams_Resume.pdf',
                      as_attachment=True,
                      attachment_filename='Williams_Resume.pdf')
 
 
 if __name__ == '__main__':
-    application.run()
+    if len(sys.argv) > 1 and sys.argv[1] == 'build':
+        freezer.freeze()
+    else:
+        app.run()

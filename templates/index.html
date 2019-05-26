@@ -32,7 +32,7 @@
 						</div>
 						<nav>
 							<ul>
-								<li><a href="#intro">Principles</a></li>
+								<li><a href="{{ url_for("intro") }}">Principles</a></li>
 								<li><a href="#work">Blog</a></li>
 								<li><a href="#about">About</a></li>
 								<li><a href="#contact">Contact</a></li>
@@ -45,8 +45,8 @@
 					<div id="main">
 
 						<!-- Intro -->
-							<article id="intro">
-								<h2 class="major">Principles</h2>
+                            <article id="intro">
+                                <h2 class="major">Principles</h2>
                                 <p>This page hopes to give you a summary of what drives me. Take it as a contract of what to expect when hired. Certainly not all ideas are originally mine, and many are taken from those who inspire me.</p>
                                 <p><strong>People &gt; Product &gt; Stack</strong></p>
                                 <p>One of the most important lessons I've learned by listening to various entrepreneurs is that you invest in people, not ideas. This stems from the belief that ideas are cheap and follow-through is expensive. As a second point to this, product means little without customers. Therefore, execution depends on having empathy for the customer, be it an end-user or another business. This empathy is also vital within the organization, because great teams make for great companites. As for the final point, though I certainly have favorite languages/frameworks/databases, I try to not make everything look like a nail just because I have a hammer. Depending on what's needed, I'm adaptable and love to learn. In the end, I just want to make the best version of whatever needs to be made given the allotted time.</p>
@@ -61,24 +61,23 @@
                                 <p><em>Prioritizing:</em> I was my advisor's first graduate student, which gave me quite a bit of choice in which project to pursue. However, this resulted in several instances where I had to choose whether to abandon a project or push through. This gave me a great deal of practice in snatching low-hanging fruit while keeping the big picutre in mind.</p>
                                 <p><em>Being proactive:</em> There are several projects over the course of my career which certainly didn't fall into my lap, and I instead had to take initiative and present results to a superior, convincing them of the value of said project. I believe this level of autonomy, foresight, and negotiation skills will be an asset to anyone who hires me.</p>
                                 <p><em>Flexibility:</em> I have quite a bit of experience in environments that are out of my comfort zone. Whether this involves collaborating with people from disciplines I know little about, or being immersed in a country where my main language isn't spoken, I've learned to be flexible. I'll meet the other party in the middle rather than getting frustrated, and I can make on-the-fly adjustments in the wake of unexpected events.</p>
-							</article>
-
-						<!-- Work -->
+                            </article>
+                            <!-- Work -->
 							<article id="work">
                                 <h2 class="major">Blog</h2>
                                     <div class="fa-border" style="width: 100%"></div>
                                         <div class="ls">
-                                            {%  for page in data %}
-                                                <a href={{page['symlink']}}>
-                                                    <div class="post">
-                                                        <div class="thumbnail">
-                                                            <img style="width:150px; height:150px; margin-left: 5%; margin-top: 5%; margin-bottom: 5%;" src={{ page['thumbnail'] }} alt>
-                                                        </div>
-                                                        <h3 style="margin-top:0; font-size:95%; alignment: center">{{page['title']}}</h3>
-                                                        <h4 style=font-size:60%>{{ page['description'] }}</h4>
-                                                    </div>
-                                                </a>
-                                            {%  endfor %}
+                                        {% block content %}
+                                            <ul>
+                                            {% for page in pages %}
+                                                <li>
+                                                    <a href="{{ url_for("render_post", path=page.path) }}">{{ page.title }}</a>
+                                                </li>
+                                            {% else %}
+                                                <li>No pages so far</li>
+                                            {% endfor %}
+                                            </ul>
+                                        {% endblock content %}
                                         </div>
                             </article>
 						<!-- About -->
@@ -93,27 +92,6 @@
 						<!-- Contact -->
 							<article id="contact">
 								<h2 class="major">Contact</h2>
-                                {{ flash }}
-								<form method="post" action={{ url_for('send_email') }}>
-									<div class="fields">
-										<div class="field half">
-											<label for="name">Name</label>
-											<input type="text" name="name" id="name" />
-										</div>
-										<div class="field half">
-											<label for="email">Email</label>
-											<input type="text" name="email" id="email" />
-										</div>
-										<div class="field">
-											<label for="message">Message</label>
-											<textarea name="message" id="message" rows="4"></textarea>
-										</div>
-									</div>
-									<ul class="actions">
-										<li><input type="submit" value="Send Message" class="primary" /></li>
-										<li><input type="reset" value="Reset" /></li>
-									</ul>
-								</form>
 								<ul class="icons">
 									<li><a href="https://twitter.com/dendrondal" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
 									<li><a href="https://bitbucket.org/dendrondal/" class="icon fa-bitbucket"><span class="label">BitBucket</span></a></li>
