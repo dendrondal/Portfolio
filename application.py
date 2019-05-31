@@ -1,12 +1,7 @@
-from flask import render_template, request, send_file
+from flask import render_template, send_file
 from flask_frozen import Freezer
-from flask_mail import Message, Mail
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 from flask import Flask
 from flask_flatpages import FlatPages
-import connexion
-from pathlib import Path
 import sys
 
 app = Flask(__name__)
@@ -17,7 +12,6 @@ freezer = Freezer(app)
 
 @app.route('/')
 def main_page():
-    print([page.meta for page in pages])
     return render_template('index.html', pages=pages)
 
 
@@ -25,11 +19,6 @@ def main_page():
 def render_post(path):
     page = pages.get_or_404(path)
     return render_template('post.html', page=page)
-
-
-@app.route('/intro/')
-def intro():
-    return render_template('intro.html')
 
 
 @app.route('/download_resume')
@@ -43,4 +32,4 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'build':
         freezer.freeze()
     else:
-        app.run()
+        app.run(port=8080)

@@ -32,7 +32,7 @@
 						</div>
 						<nav>
 							<ul>
-								<li><a href="{{ url_for("intro") }}">Principles</a></li>
+								<li><a href="#intro">Principles</a></li>
 								<li><a href="#work">Blog</a></li>
 								<li><a href="#about">About</a></li>
 								<li><a href="#contact">Contact</a></li>
@@ -67,17 +67,17 @@
                                 <h2 class="major">Blog</h2>
                                     <div class="fa-border" style="width: 100%"></div>
                                         <div class="ls">
-                                        {% block content %}
-                                            <ul>
-                                            {% for page in pages %}
-                                                <li>
-                                                    <a href="{{ url_for("render_post", path=page.path) }}">{{ page.title }}</a>
-                                                </li>
-                                            {% else %}
-                                                <li>No pages so far</li>
-                                            {% endfor %}
-                                            </ul>
-                                        {% endblock content %}
+                                            {%  for page in pages %}
+                                                <a href={{ url_for("render_post", path=page.path)}}>
+                                                    <div class="post">
+                                                        <div class="thumbnail">
+                                                            <img style="width:150px; height:150px; margin-left: 5%; margin-top: 5%; margin-bottom: 5%;" src={{ page.thumbnail }} alt>
+                                                        </div>
+                                                        <h3 style="margin-top:0; font-size:95%; alignment: center">{{page.title}}</h3>
+                                                        <h4 style=font-size:60%>{{ page.description }}</h4>
+                                                    </div>
+                                                </a>
+                                            {%  endfor %}
                                         </div>
                             </article>
 						<!-- About -->
