@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+</head>
+<body>
+{% for result in results %}
+    <div>
+    <a href={{ result.link }}>{{ result.title }}</a>
+    <h5>{{ result.description }}</h5>
+        <pre>
+            <code>
+                {% for line in result.code %}
+                    {{ line }}
+                {% endfor %}
+            </code>
+        </pre>
+    </div>
+{% endfor %}
+</body>
+</html>

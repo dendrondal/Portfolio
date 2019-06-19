@@ -21,7 +21,7 @@ def render_post(path):
     return render_template('post.html', page=page)
 
 
-@app.route('/download_resume')
+@freezer.register_generator()
 def download_resume():
     return send_file('Williams_Resume.pdf',
                      as_attachment=True,
