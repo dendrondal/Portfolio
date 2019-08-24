@@ -1,4 +1,6 @@
 title: Making this Website
+thumbnail: https://www.brandeps.com/logo-download/F/Flask-01.png
+tags: [Flask, AWS, Swagger, SQLite, SQAlchemy, Swagger, REST]
 
 #Making of...this website!
 
@@ -24,7 +26,7 @@ These were in the first version of the website before the static refactor.
 This is absolutely a viable way to deploy a dynamic, responsive website. However, I realized after a month or two of deployment that several of my tech choices were overkill for the desired application, not to mention pushing me out of the AWS free tier. I realized that a portfolio website can be served using entirely static content, similar to Jekyll. Flask actually has a phenomenal workflow to generate a static blog/portfolio site: FlatPages + Freeze. That brings me to the new stack:
 
 ## Stack (Second Attempt)
--**Flask Freeze** Allows for a normal Flask development workflow, followed by running a command line tool to build the entire web app to a folder structure ideal for serving as a static site. 
+-**Frozen Flask** Allows for a normal Flask development workflow, followed by running a command line tool to build the entire web app to a folder structure ideal for serving as a static site. 
 
 -**FlatPages** Pairs well with Freeze for blog hosting, assuming you use markdown to write your posts. Just lead off your blog post with a short yaml description of post metadata. This can be read directly into Jinja for formatting, just have this in your post:
 
