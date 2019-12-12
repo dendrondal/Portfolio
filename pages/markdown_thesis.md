@@ -7,9 +7,11 @@ I started this project with no desire to learn LaTeX. However, I ended up having
 
 ![](https://thumbs.gfycat.com/ThankfulUnkemptHydatidtapeworm-small.gif)
 
-Worse still, LaTeX error messages are quite cryptic. One of the strangest recurring issues that I found was a [single, 0.5 pt. horizontal line](https://github.com/jgm/pandoc/issues/5801) in a table that broke the entire compilation. Many STEM dissertations tend to use horizontal figures, which are thankfully quite easy to do. First off, in the ```preamble.tex``` file, insert ```\usepackage{rotate}``` somewhere before ```\begin{document}```. Then, wherever you need a horizontal figure, replace the traditional markdown syntax with this:
+Worse still, LaTeX error messages are quite cryptic. One of the strangest recurring issues that I found was a [single, 0.5 pt. horizontal line](https://github.com/jgm/pandoc/issues/5801) in a table that broke the entire compilation. Many STEM dissertations tend to use horizontal figures, which are thankfully quite easy to do. First off, in the ```preamble.tex``` file, insert ```\usepackage{rotate}``` and ```\usepackage{pdfpages}``` somewhere before ```\begin{document}```. Then, wherever you need a horizontal figure, replace the traditional markdown syntax with this:
 
 ```latex
+\begin{landscape}
+
 \begin{sidewaysfigure}
     \hypertarget{fig:<LABEL>}{%
         \includegraphics{<PATH_TO_IMAGE>}
@@ -17,9 +19,29 @@ Worse still, LaTeX error messages are quite cryptic. One of the strangest recurr
         \label{fig:<LABEL>}
     }
 \end{sidewaysfigure}
+
+%Repeat for additional sideways figures
+
+\end{landscape}
 ```
 
-Here, <LABEL> is wha you'll use to reference this in the main text, using ```@fig:<LABEL>```. This should take care of your image needs, but images are unfortunately nowhere near as problematic as tables.
+Here, <LABEL> is what you'll use to reference this in the main text, using ```@fig:<LABEL>```. This should take care of your image needs, but images are unfortunately nowhere near as problematic as tables. Note that this will put page numbers on the left side of every page. If you want to have them at the bottom of your page, put this in your preamble:
+
+```latex
+\fancypagestyle{sideways}{
+\fancyhf{} %Clears the header/footer
+\fancyfoot{% Footer
+\makebox[\textwidth][r]{% Right
+  \rlap{\hspace{.75cm}% Push out of margin by \footskip
+    \smash{% Remove vertical height
+      \raisebox{4.87in}{% Raise vertically
+        \rotatebox{90}{\thepage}}}}}}% Rotate counter-clockwise
+\renewcommand{\headrulewidth}{0pt}% No header rule
+\renewcommand{\footrulewidth}{0pt}% No footer rule
+}
+```
+
+Now, just add ```\pagestyle{sideways}``` before ```begin{landscape}``` and ```\pagestyle{plain}``` after ```end{landscape}``` and you'll have page numbers centered at the bottom of your landscape pages.
 
 ## Dealing with Large Tables
 Just because a table looks nice in markdown doesn't mean it's going to look correct in its PDF form. Often, the text in column headers or cells overlaps, or the spacing between columns doesn't make sense. Thankfully, Pandoc has its own custom  table syntax that allows for line breaks. My recommended workflow to do this is as follows:
