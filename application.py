@@ -21,11 +21,11 @@ def render_post(path):
     return render_template('post.html', page=page)
 
 
-@freezer.register_generator()
-def download_resume():
-    return send_file('Williams_Resume.pdf',
-                     as_attachment=True,
-                     attachment_filename='Williams_Resume.pdf')
+# @freezer.register_generator
+# def download_resume():
+#     return send_file('Williams_Resume.pdf',
+#                      as_attachment=True,
+#                      attachment_filename='Williams_Resume.pdf')
 
 
 if __name__ == '__main__':
