@@ -4,6 +4,7 @@ python:
 script:
 - python application.py freeze
 deploy:
+  provider: script
   skip_cleanup: true
   script: python website.py deploy --no-freeze --push
   on:
