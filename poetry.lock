@@ -8,7 +8,7 @@ version = "7.0"
 
 [[package]]
 category = "main"
-description = "Helper module for Frozen-Flask based websites"
+description = ""
 name = "elsa"
 optional = false
 python-versions = "*"
@@ -16,10 +16,14 @@ version = "0.1.5"
 
 [package.dependencies]
 Flask = "*"
-Frozen-Flask = ">=0.15"
+Frozen-Flask = "^0.15"
 click = "*"
 ghp-import = "*"
 
+[package.source]
+reference = "b1609b2b84b59ad8cbba716f5bc2be0335c9237e"
+type = "git"
+url = "https://github.com/dendrondal/elsa.git"
 [[package]]
 category = "main"
 description = "A simple framework for building complex web applications."
@@ -125,7 +129,7 @@ category = "main"
 description = "YAML parser and emitter for Python"
 name = "pyyaml"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = "*"
 version = "5.2"
 
 [[package]]
@@ -142,7 +146,7 @@ termcolor = ["termcolor"]
 watchdog = ["watchdog"]
 
 [metadata]
-content-hash = "3785db1e54d41a43073e19eca7b240d4aa6cfdc417af14e43def8dcf55e66547"
+content-hash = "caf5326db185fe2a0688e7d0a3d9f5640424f597d1814751c7d000afa59a8854"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -150,10 +154,7 @@ click = [
     {file = "Click-7.0-py2.py3-none-any.whl", hash = "sha256:2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13"},
     {file = "Click-7.0.tar.gz", hash = "sha256:5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7"},
 ]
-elsa = [
-    {file = "elsa-0.1.5-py3-none-any.whl", hash = "sha256:7a70c216956703398cb0fc3a6b69975da4dc1fd41dc92a19944cf50fec016f75"},
-    {file = "elsa-0.1.5.tar.gz", hash = "sha256:2fc0ebb1ad7dfa4f9930ac9e6819b836edc4223de520f87a62423cf0f489f560"},
-]
+elsa = []
 flask = [
     {file = "Flask-1.1.1-py2.py3-none-any.whl", hash = "sha256:45eb5a6fd193d6cf7e0cf5d8a5b31f83d5faae0293695626f539a823e93b13f6"},
     {file = "Flask-1.1.1.tar.gz", hash = "sha256:13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52"},
