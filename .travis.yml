@@ -6,7 +6,7 @@ script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: python website.py deploy --no-freeze --push
+  script: python application.py deploy --no-freeze --push
   on:
     branch: master
     repo: dendrondal/Portfolio
