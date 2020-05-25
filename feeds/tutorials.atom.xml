@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - Tutorials</title><link href="/" rel="alternate"></link><link href="/feeds/tutorials.atom.xml" rel="self"></link><id>/</id><updated>2020-05-05T00:00:00-05:00</updated><entry><title>Migrating from Keras to PyTorch in 2020</title><link href="/migrating-from-keras-to-pytorch-in-2020.html" rel="alternate"></link><published>2020-05-05T00:00:00-05:00</published><updated>2020-05-05T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:None,2020-05-05:/migrating-from-keras-to-pytorch-in-2020.html</id><summary type="html">&lt;p&gt;&lt;em&gt;Note: this specifically applies to PyTorch 1.5 and tf.Keras 2.1.0. As
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - Tutorials</title><link href="https://dalwilliams.info/" rel="alternate"></link><link href="https://dalwilliams.info/feeds/tutorials.atom.xml" rel="self"></link><id>https://dalwilliams.info/</id><updated>2020-05-05T00:00:00-05:00</updated><entry><title>Migrating from Keras to PyTorch in 2020</title><link href="https://dalwilliams.info/migrating-from-keras-to-pytorch-in-2020.html" rel="alternate"></link><published>2020-05-05T00:00:00-05:00</published><updated>2020-05-05T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.info,2020-05-05:/migrating-from-keras-to-pytorch-in-2020.html</id><summary type="html">&lt;p&gt;&lt;em&gt;Note: this specifically applies to PyTorch 1.5 and tf.Keras 2.1.0. As
 long as the final number in the version is the same, this should still
 be applicable, but otherwise, YMMV&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;While completing my fellowship at &lt;a href="insightdatascience.com"&gt;Insight&lt;/a&gt;,
@@ -32,6 +32,10 @@ using tf.Datasets. TensorBoard was, and still is, the predominant
 monitoring solution for model training, but it’s now fully supported by
 PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
 api decisions, whereas PyTorch seems to bear more similarity to Numpy.&lt;/p&gt;
+&lt;div class="admonition important"&gt;
+&lt;p class="admonition-title"&gt;Important&lt;/p&gt;
+&lt;p&gt;I would highly reccomend checking out the &lt;a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html"&gt;60 minute blitz&lt;/a&gt; for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras&lt;/p&gt;
+&lt;/div&gt;
 &lt;/section&gt;
 &lt;section id="defining-the-computation-graph"&gt;
 &lt;h2&gt;Defining the computation graph&lt;/h2&gt;

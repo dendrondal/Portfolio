@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <title>Should you switch to Manjaro Linux? | Dal&#39;s Portfolio</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="https://dalwilliams.info/static/m-dark.css" />
+  <link rel="icon" href="https://dalwilliams.info/images/favicon.ico" type="image/x-ico" />
+  <link rel="canonical" href="https://dalwilliams.info/should-you-switch-to-manjaro-linux.html" />
+  <link href="https://dalwilliams.info/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio" />
+  <link href="https://dalwilliams.info/feeds/blog.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio | blog" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#353535" />
+  <meta name="twitter:site" content="@dendrondal" />
+  <meta property="og:site_name" content="Dal&#39;s Portfolio" />
+  <meta property="og:title" content="Should you switch to Manjaro Linux?" />
+  <meta name="twitter:title" content="Should you switch to Manjaro Linux?" />
+  <meta property="og:url" content="https://dalwilliams.info/should-you-switch-to-manjaro-linux.html" />
+  <meta property="og:description" content="Probably not. Here&#39;s why:" />
+  <meta name="twitter:description" content="Probably not. Here&#39;s why:" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:type" content="article" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="https://dalwilliams.info/" id="m-navbar-brand" class="m-col-t-9 m-col-m-none m-left-m"><img src="https://dalwilliams.info/images/tree.jpg" alt="" />Dal&#39;s Portfolio</a>
+      <a id="m-navbar-show" href="#navigation" title="Show navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <a id="m-navbar-hide" href="#" title="Hide navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="https://dalwilliams.info/pages/about-me.html">About</a></li>
+            <li><a href="https://github.com/dendrondal">GitHub</a></li>
+            <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
+            <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main>
+<div class="m-container">
+  <div class="m-row">
+    <article class="m-col-m-10 m-nopadb">
+      <header>
+        <h1><a href="https://dalwilliams.info/should-you-switch-to-manjaro-linux.html" rel="bookmark" title="Permalink to Should you switch to Manjaro Linux?">
+          <time class="m-date" datetime="2020-05-02T00:00:00-05:00">
+            May <span class="m-date-day">02</span> 2020
+          </time>
+          Should you switch to Manjaro Linux?
+        </a></h1>
+        <p>Probably not. Here's why:</p>
+      </header>
+      <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>Since I first decided I wanted to install GPU-enabled TensorFlow, I've mainly been working on Ubuntu 16.04. However, as of late, there have been several issues that prompted a switch. The first of which was that I could not for the life of me get Docker to install. Secondly, updating CUDA for my (now) rather old GTX 660 GPU so that I can use all of the newer TensorFlow features became significantly more difficult and less stable. Ubuntu 19.04, adorably named Disco Dingo, claimed to <a href="https://wiki.ubuntu.com/DiscoDingo/ReleaseNotes">fix some of the GPU compatibility issues</a>, but since I was between OSes, and Ubuntu's parent company, Canonical, has been <a href="https://ubuntu.com/legal/data-privacy">known to participate in some sketchy business practices</a>, I decided to experiment instead. Looking at both <a href="https://distrowatch.com/">DistroWatch</a> and the <a href="https://www.reddit.com/r/DistroHopping/">Distro hopping subreddit</a>, Manjaro Linux seemed to be the most highly recommended and well reviewed, with a few caveats that we'll come back to. I decided to give it a try. Feel free to skip the next section if you're a nix veteran, but if you're relatively new to the non-Ubuntu Linux world, this may be good to know.</p>
+<section id="distros-desktops">
+<h2>Distros &amp; Desktops</h2>
+<p>It's very important to note that all of the things I'm talking about run on the same Linux Kernel, so deep down under the hood, they all work the same. However, out of the absurd number of distros out there, they can be roughly grouped based on how they manage their software.</p>
+<p><img alt="The Linux family tree. See, it's not so complicated! /s" src="https://cdn-media-1.freecodecamp.org/images/1*7KP2aqaHVrCgJfF9mhE8hQ.png" style="width: 400px" /></p>
+<ul>
+<li><strong>The Debian family</strong> This is where Ubuntu, Mint, Kali, and Elementary OS fall. They primarily use <code>apt</code> as their package manager, with some of them using <code>flatpak</code> or <code>snap</code>. The Debian archives are massive, but installation sometimes takes several steps due to dependency management. <code>Snap</code> tries to fix this, effectively trying to be the Linux version of the Apple store, but the tradeoff is that apps installed through here are often <a href="https://askubuntu.com/questions/948861/why-would-i-want-to-install-a-snap-if-i-can-install-via-apt-instead">significantly slower than their apt counterparts</a>, and the selection isn't as broad. Also, with apt, in order to keep your software on the bleeding edge (if needed), you need to use a personal package archive (PPA). <strong>These must be used very carefully</strong>, as they have the potential to be a large security vulnerability. Make sure the source is trusted.</li>
+<li><strong>The Red Hat family</strong> These are the kings of the enterprise servers. Slow to update, but very stable in exchange. I haven't personally used Fedora or the like, so I can't really say much else here.</li>
+<li><strong>The Arch family</strong> Arch itself is quite popular, and notoriously difficult to install. Manjaro sought to streamline this process for a better out of box experience. The Arch user repository (AUR) is used for software installation here, and is a major draw toward Manjaro. To use a Python analogy, <code>apt</code> seemed like using <code>venv + pip</code> for dependency management, whereas the AUR felt more like <a href="https://python-poetry.org/">Poetry</a> with how it handles dependency management. Unlike what we've talked about so far where the distros have versions, Arch and Manjaro both have rolling releases, meaning that you effectively always have the latest and greatest. This comes with the tradeoff of stability, and Manjaro actually runs slightly behind Arch so that pure Arch users can be used as a test audience.</li>
+<li><strong>The SUSE family</strong> openSUSE lies somewhere in between Manjaro and Ubuntu, as it allows both versioned and rolling releases. I have little experience with this family, but out of all the families/distros, the computational chemists in my PhD program chose openSUSE, which speaks very highly of its reliability and flexibility.</li>
+</ul>
+<p>I'm sure I missed a significant number here, but I believe these are the four biggest families. In addition to distros, there are also desktop environments (DEs). Ubuntu users know that it normally ships with GNOME desktop, but there are also versions such as Kubuntu and Xubuntu that look very different, with the first letter indicating the DE. GNOME tends to be the most resource-intensive DE, and XFCE/LXDE(LXQt) tend to be the lightest. In between these, we have KDE, Cinnamon, Budgie, and many others. Honestly, unless you're on an older computer, resource usage is kind of a moot point, as if you have a few tabs open in $YOUR_FAVORITE_BROWSER, you've already eaten up far more resources than any background DE process. KDE Plasma has the reputation of being the most customizable if you want to tinker, but otherwise, just spend some time on the boot disk OS and use what catches your eye (and is actively maintained, preferably).</p>
+<p>If you want something even more minimalist, or would like more keyboard control, there's also an entire ecosystem of window managers (WMs). There's a great post on <a href="https://ubuntuforums.org/showthread.php?t=2415676&amp;">the ubuntu forums</a> that covers comprehensively covers DEs/WMs.</p>
+</section>
+<section id="i-use-arch-btw">
+<h2>&quot;I use Arch, BTW&quot;</h2>
+<p>Manjaro installation is equally as easy as Ubuntu, even having an option to install alongside another OS on the same drive. It's literally a point and click installer that can be easily put Manjaro alongside Windows. KDE is lives up to its reputation of being incredibly customizable, but has built-in global themes available to improve the look out of the box (normal Plasma is just ok looking, IMO). AUR is not enabled by default, which is understandable for security reasons. Much like PPAs with apt, one needs to be very careful to note who the package is coming from. The package manager, pacman, can install packages in a single line once they recieve enough upvotes in the AUR, but otherwise, you'll need to use <code>makepkg</code> first before using pacman. If you elect to do this, make sure you check the PKGBUILD and .install files for any suspicious requirements or scripts. Unless you need some very niche software, it is far more time-efficient to limit yourself to packages directly installable via pacman.</p>
+<p>Now we get to the true test: installing GPU-enabled TensorFlow. This is where Manjaro really shines, due to its built in hardware detection and pacman. I've had issues with conda, pip, and the incredibly slow bazel for installation, and the official Docker container for some reason <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/">runs on legacy python</a>. Thankfully, on Manjaro, all I needed was:</p>
+<p><code>sudo pacman -S cuda cudnn python-tensorflow114-opt-cuda</code></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is no longer the most up-to-date version of TensorFlow. When I did this, the 1.14 didn't even need to be specified. More importantly, there is apparently a <a href="https://github.com/tensorflow/tensorflow/issues?q=is%3Aissue+is%3Aopen+bazel+runtime+exception">bug in bazel</a> preventing this install from working unless you downgrade it, so proceed with caution.</p>
+</div>
+<p>After happily using GPU-enabled TensorFlow for awhile, I eventually decided to restart my computer for one reason or another, and when I booted back into Manjaro, I received the dreaded blinking cursor on a blac k screen. I thought maybe I had somehow messed with my Grub loader, so I used my live disk to check it with <code>fstab</code>, and everything appeared to be in order. I tried downgrading the Kernel, as apparently there were issues with the newest release, still nothing. Finally, I decided to uninstall my NVIDIA drivers, as they rarely play nice with Linux. This black screen didn't respond to any commands to bring up a command prompt, so after a couple painful days, I had to call this a loss. The issue was most likely due to the fact that I let pamac (the pacman gui) manage my updates for several packages for me, which caused some sort of <a href="https://www.youtube.com/watch?v=skMiDMaephc">breaking change</a>. In other words, this was definitely my fault.</p>
+<p>It's important to learn that cutting-edge implies you can also cut yourself with it, as I did. Apparently Manjaro does <a href="https://forum.manjaro.org/t/the-how-often-does-an-update-break-something-survey/45702">have a tendency to break  occasionally</a> unless properly managed, which I suppose is true of any Linux distro, but is likely far more true with a rolling release. One side note is that I ended up messing around with Kubuntu rather than doing a reinstall, and had significant issues with the display, ranging from granularity in parts of my windows to full-stop freezes. Given that I know Ubuntu works on this machine, I now wonder if KDE Plasma was the issue rather than Manjaro, as it clearly just doesn't work on my machine.</p>
+</section>
+<section id="key-takeaways">
+<h2>Key Takeaways</h2>
+<p>Think about what you need from your OS. Most people reading this are probably some variant of a data scientist or developer, so we mainly need an environment conducive to programming in Python/R/Scala/JavaScript with all our required tooling. A stable OS is necessary for this, so unless you want to dive far deeper into the inner workings of nix, Manjaro probably isn't for you. In addition, it's important to remember that software is a popularity contest of sorts. I say this because the more people use a given OS/software/framework/language, the higher the chance that someone has had the same problem as you and possibly found a solution.</p>
+<p>For those curious, I ended up settling with Linux Mint on my desktop, and I don't see myself hopping to anything else anytime soon. Cinnamon is a gorgeous and highly customizable DE, and everything else just feels natural. On my laptop, I still use Ubuntu, but I also use I3 WM to minimize how much I need to use the trackpad and maximize efficiency. This definitely took some tinkering (along with some <a href="https://www.reddit.com/r/unixporn/comments/b79cva/i3gapspolybarcyberpunk_theme_v2/">shameless copying</a>), but I'm very happy with the result:</p>
+<p><img alt="image1" src="https://dalwilliams.info/images/desktop_screenshot.png" style="width: 400px" /></p>
+<p>The <strong>most important takeaway</strong> is whatever you do, make sure your &quot;dots&quot; are put under version control. That is, your <code>.bashrc, .zshrc, .config,</code> or whatever other config files your particular flavor has. Atlassian has a <a href="https://www.atlassian.com/git/tutorials/dotfiles">good guide</a> on how to set this up. I also have a few <a href="https://github.com/dendrondal/dots">install scripts</a> in the same repository as my dots, so if I change machines, I can have a reproducible environment in no time!</p>
+</section>
+<!-- /content -->
+      <footer>
+        <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-05-02T00:00:00-05:00">Sat 02 May 2020</time> in <a href="https://dalwilliams.info/category/blog.html">blog</a>. Tags: <a href="https://dalwilliams.info/tag/linux.html">Linux</a>, <a href="https://dalwilliams.info/tag/bash.html">Bash</a>, <a href="https://dalwilliams.info/tag/docker.html">Docker</a>, <a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a>.</p>
+      </footer>
+    </article>
+    <nav class="m-navpanel m-col-m-2">
+      <h3>Categories</h3>
+      <ol class="m-block-bar-m">
+        <li><a href="https://dalwilliams.info/category/blog.html">blog</a></li>
+        <li><a href="https://dalwilliams.info/category/projects.html">Projects</a></li>
+        <li><a href="https://dalwilliams.info/category/talks.html">Talks</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorials.html">Tutorials</a></li>
+      </ol>
+      <h3>Tag cloud</h3>
+      <ul class="m-tagcloud">
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/airflow.html">Airflow</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/altair.html">Altair</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/chatbots.html">chatbots</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/computer-vision.html">computer vision</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/flask.html">Flask</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/gans.html">GANs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/keras.html">Keras</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/latex.html">LaTeX</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/luigi.html">Luigi</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/mongodb.html">MongoDB</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pandas.html">Pandas</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/papermill.html">Papermill</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/rest.html">REST</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/science-writing.html">Science Writing</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/scikit-learn.html">SciKit Learn</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/spacy.html">Spacy</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/sqalchemy.html">SQAlchemy</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/sqlite.html">SQLite</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/swagger.html">Swagger</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/vaes.html">VAEs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</main>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Dal's Portfolio. Powered by <a href="https://getpelican.com">Pelican</a> and <a href="https://mcss.mosra.cz">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>
