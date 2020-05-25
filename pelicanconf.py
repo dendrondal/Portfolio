@@ -47,7 +47,7 @@ M_CSS_FILES = ['https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i
 M_THEME_COLOR = '#353535'
 
 PLUGIN_PATHS = ['m.css/plugins']
-PLUGINS = ['m.htmlsanity', 'm.code']
+PLUGINS = ['m.htmlsanity', 'm.code', 'm.components']
 
 M_FAVICON = ('images/favicon.ico', 'image/x-ico')
 M_SITE_LOGO = 'images/tree.jpg'
