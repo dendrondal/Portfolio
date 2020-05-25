@@ -38,11 +38,7 @@ monitoring solution for model training, but it’s now fully supported by
 PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
 api decisions, whereas PyTorch seems to bear more similarity to Numpy.
 
-..
-    I would highly reccomend checking out the `60 minute
-    blitz <https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html>`__for
-    a grasp of some of the core concepts of PyTorch. This article serves as
-    a high-level overview for migration from Keras
+.. important:: I would highly reccomend checking out the `60 minute blitz <https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html>`__ for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras
 
 Defining the computation graph
 ------------------------------
