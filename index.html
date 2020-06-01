@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="/static/m-dark.css" />
   <link rel="icon" href="/images/favicon.ico" type="image/x-ico" />
+  <link rel="next" href="/index2.html" />
   <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#353535" />
@@ -43,6 +44,177 @@
     <div class="m-col-m-10">
       <article>
         <header>
+          <h1><a href="/a-wild-hypothesis-appeared.html" rel="bookmark" title="Permalink to A Wild Hypothesis Appeared!">
+            <time class="m-date" datetime="2020-05-29T00:00:00-05:00">
+              May <span class="m-date-day">29</span> 2020
+            </time>
+            A Wild Hypothesis Appeared!
+          </a></h1>
+          <p>Part 2 of the Wild Python series, focusing on property-based testing</p>
+        </header>
+        <div class="m-clearfix-l"></div>
+<!-- content -->
+<aside class="m-note m-default">
+<h3>This article presumes some familiarity with unit and functional testing, as well as pytest. Though there are many tutorials for these topics online, I found less on the Hypothesis library. Moreover, I wrote this article to gain some intuition as to <em>when</em> to use property-based tests rather than example-based tests.</h3>
+</aside>
+<section id="what-is-property-based-testing">
+<h2>What is property-based testing?</h2>
+<p>Putting it rather coarsely, property-based testing (PBT) is a method of brute forcing your tests. Rather than the general workflow of asserting what a function should output with a given example, PBT runs the function multiple times with inputs sampled from a space of all possible examples. You may be thinking &quot;why not just use <code>pytest.mark.parameterize</code>?&quot; The answer is edge cases and other unknown unknowns. In theory, this should catch bugs more quickly, and result in less code necessary for your test suite by not having to manually add pytest marks.</p>
+<p><img alt="image0" src="https://1.bp.blogspot.com/-5n5lQoNvzNU/XAT3u9uu8SI/AAAAAAAAhUo/OMOOhkSYKNMAXaGeW0MfF07uudCWa-HZwCLcBGAs/s1600/everyone.png" style="width: 400px" /></p>
+<p>The introduction to <a href="https://hypothesis.works/articles/getting-started-with-hypothesis/">Hypothesis</a>, a PBT framework for Python, gives a quick rundown of what this might look like. Hypothesis is effectively the Python version of <a href="https://www.youtube.com/watch?v=hXnS_Xjwk2Y">QuickCheck</a>, Haskell's PBT framework. Functional programming languages like Haskell lend themselves well to PBT, due to their heavily mathematical nature. Going through some <a href="https://dev.to/jdsteinhauser/intro-to-property-based-testing-2cj8">properties of mathematical funcitons</a>, their Python equivalents would look something like this:</p>
+<pre class="m-code"><span class="c1"># Associative: a + (b + c) = (a + b) + c</span>
+<span class="k">assert</span> <span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span><span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="p">))</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">)</span>
+<span class="c1"># Commutative: a + b = b + a</span>
+<span class="k">assert</span> <span class="nb">max</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="nb">max</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="c1"># Distributive: a(b+c) = ab + ac</span>
+<span class="k">assert</span> <span class="s1">&#39;asdf&#39;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;jkl;&#39;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="s1">&#39;asdf&#39;</span> <span class="o">+</span> <span class="s1">&#39;jkl;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="c1"># Idiompotent: f(x) = f(f(x))</span>
+<span class="n">lst1</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="n">lst2</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">lst1</span> <span class="o">==</span> <span class="n">lst2</span>
+<span class="c1"># Identity: f(x, i) = x</span>
+<span class="k">assert</span> <span class="n">lst</span><span class="o">.</span><span class="n">extend</span><span class="p">([])</span> <span class="o">==</span> <span class="n">lst</span>
+<span class="c1"># &#39;Bilbo&#39; testing (there and back again)</span>
+<span class="k">assert</span> <span class="n">lst1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">lst</span>
+<span class="c1"># No surprise side effects</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></pre>
+<p>These are contrived examples, but they should give you some sort of an idea of what the &quot;property&quot; in PBT implies. I originally referred to PBT as brute forcing your tests, but that's only partially true. A good framework, like Hypothesis, will change behavior once an assertion fails, and &quot;shrink&quot; the input it provides until it can provide a <em>minimum working example</em> of what will cause your program to break. This save a lot of guesswork in diagnosing the problem.</p>
+</section>
+<section id="hypothesis-in-action">
+<h2>Hypothesis in Action</h2>
+<p>At its core, Hypothesis builds its test suite around strategies (the <code>st</code> module from here on). These allow for random generation of data types within Python, and allow for parameterization (i.e. an ASCII string with a minimum length of 1). For more complex data types, <code>st.composite</code> can be used. Other important terms are <code>given</code> and <code>assume</code>. The <code>&#64;given</code> decorator is used to express which strategies and boundaries a function should be tested with, and <code>assume</code> removes test cases that we don't care about. The opposite of assume, <code>&#64;example</code>, tells hypothesis to try this test case every single time. A good place for this would be to include a SQL injection attack as an example when testing a Flask function that has a query string.</p>
+<p>Before going into production use cases, let's take one of our contrived unit tests from the previous section and change it to a Hypothesis test. Let's say we're writing our own programming language, and want to make sure our version of Python's <code>upper</code> method work properly. This is an ideal use case for PBT, as we want to make sure this can handle any kind of text:</p>
+<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_upper</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># Idiompotency</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="c1"># Distributive (this assumes + is overloaded for string concatenation)</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="c1"># No side effects</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></pre>
+<p>This is where hypothesis gets its name from, as we could write out the above test like a traditional hypothesis: &quot;Given a string of length &gt; 1, upper will be idiompotent, distributive, and will return a string with the same length as its input.&quot; Then we test it by trying to find a case that falsifies that hypothesis. If we were wanting to extend our new language's functionality by using the <code>extend</code> method (see what I did there?), we would need a more complex data type to test on. This is where composite strategies come in:</p>
+<pre class="m-code"><span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
+<span class="k">def</span> <span class="nf">make_lists</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">from_type</span><span class="p">(),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">make_lists</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">test_extend</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">lst1</span><span class="p">,</span> <span class="n">lst2</span><span class="p">,</span> <span class="n">lst3</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="n">concat</span> <span class="o">=</span> <span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">))</span>
+    <span class="c1"># Associativity</span>
+    <span class="k">assert</span> <span class="n">concat</span> <span class="o">==</span> <span class="p">(</span><span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="p">))</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">)</span>
+    <span class="c1"># No side effects</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">concat</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></pre>
+<p>Here we draw 3 lists full of arbitrary data types and lengths with <code>make_lists</code>, and try to combine them. As a fail-safe, we assume that all three lists exist.Not to belabor the point, I will recommend the <a href="https://hypothesis.readthedocs.io/en/latest/data.html">documentation</a> for more examples, and move on to production use cases.</p>
+</section>
+<section id="hypothesis-in-the-wild">
+<h2>Hypothesis in the Wild</h2>
+<p>The <a href="https://github.com/KissPeter/APIFuzzer">APIFuzzer</a> library uses Hypothesis to see if their API testing framework can handle arbitrary JSON. This is trivial to implement in Hypothesis:</p>
+<pre class="m-code"><span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
+<span class="k">def</span> <span class="nf">dict_str</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">dictionaries</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
+<span class="k">def</span> <span class="nf">list_of_dicts</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">dict_str</span><span class="p">()))</span>
+
+<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dict_str</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">test_json_data_dict_valid</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">list_of_dicts</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">test_json_data_list_valid</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span></pre>
+<p>Walking through this code, the composite used draws from strategies, producing nonzero sized dictionaries with string keys and values. It can then produce lists of these dicts by drawing from this strategy. It's then used to make sure their <code>json_data</code> function returns the proper type regardless of what is thrown at it. The Hypothesis documentation has an <a href="https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data">even more robust</a> example of generating random JSON by using a recursive strategy. This method uses unbounded types, but we can also add boundary conditions based off of what input sizes/shapes we expect. Here's an example from <a href="https://github.com/pyvista/pyvista">pyvista</a>, a 3D rendering library, where they want to make sure an error is raised when someone tries to use their <code>grid.transform</code> method is called on an improperly shaped array:</p>
+<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">arrays</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">array_shapes</span><span class="p">(</span><span class="n">max_dims</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_side</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
+<span class="k">def</span> <span class="nf">test_transform_should_fail_given_wrong_numpy_shape</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+    <span class="n">assume</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">array</span><span class="p">)</span></pre>
+<p>Let's move on to something that many data scientists will want to keep in mind, which is determining whether the output of a function is stochastic or deterministic. The <a href="https://github.com/Axelrod-Python/Axelrod">Axelrod</a> library, a game theory simulator in python, does just this with Hypothesis. Here, they test to see if either randomizing the choices of their players at the start by using a <code>Random</code> player or making the decision making of the players less consistent by adding noise.</p>
+<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">floats</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">test_stochastic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+
+    <span class="n">assume</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Cooperator</span><span class="p">(),</span> <span class="n">axl</span><span class="o">.</span><span class="n">Cooperator</span><span class="p">()</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span>
+
+    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span>
+
+    <span class="n">p1</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span></pre>
+<p>As you can imagine, this pattern would be ideal to test a bootstrapping or test-train splitting function. Hypothesis also lets you set the seed for the randomization, helping you ensure reproducibility.</p>
+</section>
+<section id="extensibility">
+<h2>Extensibility</h2>
+<p>Hypothesis also has built-in modules for Numpy (<code>hynp</code> below) and Pandas compatibility. Here is a test within Numpy itself that makes sure array printing works with all possible unicode strings:</p>
+<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">hynp</span><span class="o">.</span><span class="n">from_dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)))</span>
+<span class="k">def</span> <span class="nf">test_any_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="c1"># This test checks that, given any value that can be represented in an</span>
+    <span class="c1"># array of dtype(&quot;U&quot;) (i.e. unicode string), ...</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">text</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">text</span><span class="p">])</span>
+    <span class="c1"># casting a list of them to an array does not e.g. truncate the value</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text</span><span class="p">)</span>
+    <span class="c1"># and that np.array2string puts a newline in the expected location</span>
+    <span class="n">expected_repr</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{0!r}</span><span class="s2"> </span><span class="si">{0!r}</span><span class="se">\n</span><span class="s2"> </span><span class="si">{0!r}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">max_line_width</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">expected_repr</span><span class="p">)</span></pre>
+<p>As for Pandas, I'll use an example from my <a href="https://github.com/dendrondal/Localvore">Localvore</a> project. I had a function, <code>filter_predictions</code>, that was the core of an ETL pipeline. At a high level, it ingested a dataframe of JSON data of recipes (e.g. {'text': '1 cup flour'}) along with ids and matching model predicitons, and produced another dataframe with ids and ingredient lists (minus adjectives and units, e.g. 'flour'). Given that this was the major bottleneck in my ETL pipeline, I wanted to make sure any errors were caught early. Rather than using a mock DataFrame, I instead decided to let Hypothesis do the heavy lifting for me:</p>
+<pre class="m-code"><span class="nd">@given</span><span class="p">(</span>
+    <span class="n">data_frames</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">column</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">alphabet</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">column</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;raw_ingrs&#39;</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span>
+                    <span class="n">st</span><span class="o">.</span><span class="n">dictionaries</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">just</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
+                                    <span class="n">values</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+                                    <span class="n">alphabet</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">),</span>
+                                    <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span>
+            <span class="p">),</span>
+            <span class="n">column</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">booleans</span><span class="p">(),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span>
+            <span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_filter_predictions</span><span class="p">(</span><span class="n">mock_df</span><span class="p">):</span>
+    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mock_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mock_df</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">ETL_pipeline</span><span class="o">.</span><span class="n">filter_predictions</span><span class="p">(</span><span class="n">mock_df</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ingredients&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ingredients&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span></pre>
+<p>The <code>data_frames</code> utility can define a set of columns, with names and strategies for each column. I'm also making the assumptions that the dataframe is non-empty, and has the proper number of columns. Note the versatility of strategies available here: one can choose the alphabet to draw from, can create a list of booleans, and can fix a certain value, such as all dictionaries having the 'text' key. This may be a lot of code, but it allows me to be very confident in the code that I write. In addition, I could reuse this mock dataframe strategy by putting it in a function with the <code>composite</code> decorator.</p>
+</section>
+<section id="when-not-to-use-hypothesis">
+<h2>When <em>Not</em> to use Hypothesis</h2>
+<p>Some advice from the Hypothesis documentation gives some good starting wisdom: if you find that you need to parameterize a test extensively, that is a good sight PBT may be effective there. The primary reasons I have found not to use PBT is when either properties are very difficult to think of, or when they add too much overhead to your CI/CD pipeline (the default number of function calls for each Hypothesis test is 200). Between this increase in runtime, mental overhead, and code, PBT should not be your go-to method of testing, but instead a tool in your toolbox. The key factor in deciding what type of test to use isn't necessarily the complexity of your function, but <em>how many different types of input</em> are valid for said function. PBT can also be useful when approaching large legacy codebases. As a particular example, <a href="https://medium.com/criteo-labs/introduction-to-property-based-testing-f5236229d237">this article</a> about PBT in JavaScript managed to find a bug in a 1 million download/day package by treating a certain function as a black box, and making assumptions from there.</p>
+<p>I hope this introduction was helpful to all reading it. My challenge to you is to find a test you've written for a function with many possible input types, and try a property based test there. Let me know how it goes!</p>
+</section>
+<!-- /content -->
+        <footer>
+          <p>Posted by <a href="/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-05-29T00:00:00-05:00">Fri 29 May 2020</time> in <a href="/category/blog.html">Blog</a>. Tags: <a href="/tag/wild-python.html">wild python</a>, <a href="/tag/testing.html">testing</a>, <a href="/tag/tutorials.html">tutorials</a>, <a href="/tag/functional-programming.html">functional programming</a>.</p>
+        </footer>
+      </article>
+      <article>
+        <header>
           <h1><a href="/migrating-from-keras-to-pytorch-in-2020.html" rel="bookmark" title="Permalink to Migrating from Keras to PyTorch in 2020">
             <time class="m-date" datetime="2020-05-05T00:00:00-05:00">
               May <span class="m-date-day">05</span> 2020
@@ -56,242 +228,10 @@
           I reached a point in my <a href="github.com/dendrondal/CIf3R">recyclable classification
           project</a> where …</p>
         </header>
-        <div class="m-clearfix-l"></div>
-<!-- content -->
-<p><em>Note: this specifically applies to PyTorch 1.5 and tf.Keras 2.1.0. As
-long as the final number in the version is the same, this should still
-be applicable, but otherwise, YMMV</em></p>
-<p>While completing my fellowship at <a href="insightdatascience.com">Insight</a>,
-I reached a point in my <a href="github.com/dendrondal/CIf3R">recyclable classification
-project</a> where I wanted to implement a
-<a href="https://sorenbouma.github.io/blog/oneshot/">siamese network</a> to improve the generalizability of my model,
-while requiring less training data. The ad-hoc siamese networks I
-created in Keras had acceptable results, but were certainly not
-production-ready. I began looking on <a href="paperswithcode.com">papers with code</a> for a more
-SOTA model, and realized that Keras implementations are few and far
-between. In fact, PyTorch seems to have <a href="https://paperswithcode.com/trends">exploded in popularity</a> to
-the point where it is now the #1 framework on papers with code. With
-this in mind, I decided it was time to start learning PyTorch.</p>
-<section id="why-move">
-<h2>Why move?</h2>
-<p>In addition to the predominance of PyTorch on paperswithcode, there are
-several advantages it offers. Back when I began learning Keras,
-TensorFlow was the dominant framework partially due to easier
-productionalization of models using tf.Serve. However, since then, the
-productionalization gap <a href="https://engineering.fb.com/ai-research/announcing-pytorch-1-0-for-both-research-and-production/">appears to be
-closing</a>.
-In addition, PyTorch comes with out-of-the-box asynchronous behavior
-when loading, whereas this still has to be specified and configured when
-using tf.Datasets. TensorBoard was, and still is, the predominant
-monitoring solution for model training, but it’s now fully supported by
-PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
-api decisions, whereas PyTorch seems to bear more similarity to Numpy.</p>
-<aside class="m-note m-default">
-<h3>I would highly reccomend checking out the <a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html">60 minute blitz</a> for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras</h3>
-</aside>
-</section>
-<section id="defining-the-computation-graph">
-<h2>Defining the computation graph</h2>
-<p>Since Keras has both the sequential and functional api, it’s worth doing
-a comparison of both with the preferred way of instantiating a PyTorch
-network. Here, let’s use a <a href="https://www.google.com/books/edition/Deep_Learning_with_Python/Yo3CAQAACAAJ?hl=en">simple feedforward
-MLP</a>
-as an example:</p>
-<pre class="m-code"><span class="c1">#Keras sequential api</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,)))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">))</span>
-
-<span class="c1">#Keras functional api</span>
-<span class="n">input_layer</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,))</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">input_layer</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">output</span> <span class="o">=</span> <span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">input_layer</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
-
-<span class="c1">#Pytorch example</span>
-<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dense2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></pre>
-<p>The obvious difference here is that the standard practice for PyTorch
-models is encapsulation into a class, and instantiating the parent
-<code>Module</code> class. Another less obvious difference is that both the input
-and output sizes of each layer have to be specified in PyTorch. Other
-than that, it’s a pretty straightforward difference. Let’s try a less
-trivial example that’s more suited to the Keras functional API: a
-siamese network for image similarity classification, based on the
-<a href="https://www.cs.cmu.edu/~rsalakhu/papers/oneshot1.pdf">original paper</a> with several convolutional layers taken out for
-the sake of length. This employs custom layers, shared weights, and
-gives an overview of how a multi-input, single output neural network can
-be implemented in the two frameworks.</p>
-<pre class="m-code"><span class="c1">#Keras example</span>
-<span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">105</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-
-<span class="n">img_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
-<span class="n">left_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
-<span class="n">right_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)</span>
-
-<span class="n">x</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">64</span><span class="p">,(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">input_shape</span><span class="p">)(</span><span class="n">img_input</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">MaxPooling2D</span><span class="p">()(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">Conv2D</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">Dropout</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
-<span class="n">out</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;sigmoid&quot;</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
-
-<span class="n">twin</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">img_input</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
-
-<span class="c1"># get the image embeddings, sharing weights between the two networks</span>
-<span class="n">encoded_l</span> <span class="o">=</span> <span class="n">twin</span><span class="p">(</span><span class="n">left_input</span><span class="p">)</span>
-<span class="n">encoded_r</span> <span class="o">=</span> <span class="n">twin</span><span class="p">(</span><span class="n">right_input</span><span class="p">)</span>
-
-<span class="c1"># merge two encoded inputs with the l1 distance between them</span>
-<span class="n">L1_layer</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-<span class="n">L1_distance</span> <span class="o">=</span> <span class="n">L1_layer</span><span class="p">([</span><span class="n">encoded_l</span><span class="p">,</span> <span class="n">encoded_r</span><span class="p">])</span>
-
-<span class="n">prediction</span> <span class="o">=</span> <span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">)(</span><span class="n">L1_distance</span><span class="p">)</span>
-
-<span class="n">siamese_net</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">left_input</span><span class="p">,</span> <span class="n">right_input</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="n">prediction</span><span class="p">)</span>
-
-<span class="c1"># The same model in PyTorch    correct = 0</span>
-<span class="k">class</span> <span class="nc">SiameseNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">2048</span><span class="p">)</span>
-            <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
-        <span class="p">)</span></pre>
-<p>Unlike Keras, convolutional layers in PyTorch have arguments in the
-order of
-<code>in_channel size, out_channels size, kernel_size, stride, padding</code>,
-with the default stride and padding being 1 and 0, respectively. You’re
-probably noticing that with the PyTorch model, we stopped around the
-<code>twin</code> definition in the Keras model. The reason being is that the
-biggest difference between keras and pytorch is how you train the model,
-aka the training loop.</p>
-</section>
-<section id="training-the-model">
-<h2>Training the model</h2>
-<p>Defining the model isn’t very different between Keras and PyTorch, but
-training the model certainly is. Rather than calling
-<code>model.compile()</code>, you instead define your forward pass as a method of
-your model. Also, your loss function, optimizer, and learning rate are
-usually defined in the training loop. Let’s start with the forward pass
-and training loop for our first MLP:</p>
-<pre class="m-code"><span class="c1"># Defining the forward pass. Note that this is a method of Model</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="c1"># F is an alias for torch.nn.functional</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></pre>
-<p>This shows two methods of model creation: for the siamese model, we
-define the entire model intially, making the forward pass as simple as
-<code>return twin(x)</code>. With the MLP, we defined the layers individually.
-Which method is better definitely depends on your use case, but my
-intuition is that a neural network that can be drawn as a linear
-progression of layers lends itself well to the MLP method, whereas
-defining your entire model as an attribute works well for more advanced
-graphs such as ResNet/Inception type models, or models with multimodal
-input/outputs. Alright, so we have our model and how our data flows
-through it. The next step is training and evaluation. This is indeed far
-more code than is needed by using <code>callbacks</code> in Keras, but the
-training loop adds complexity in exchange for significantly more
-flexibility.</p>
-<pre class="m-code"><span class="c1"># train_loader is some predefined Torch DataLoader instance</span>
-<span class="c1"># device is your cpu/gpu name</span>
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
-        <span class="c1"># Assuming X and y are torch tensors, you can also just call X.cuda() instead if</span>
-        <span class="c1"># you know you don&#39;t need to switch devices.</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="c1"># We re-instantiate the gradients during each iteration</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="c1"># Now we back-propagate</span>
-        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-        <span class="c1"># Report accuracy every 10 batches</span>
-        <span class="k">if</span> <span class="n">batch</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Loss of </span><span class="si">{</span><span class="n">loss</span><span class="si">}</span><span class="s1"> after </span><span class="si">{</span><span class="n">batch</span><span class="si">}</span><span class="s1"> epochs on training set&#39;</span><span class="p">)</span></pre>
-<p>The function above is meant to be used in a <code>for</code> loop with a preset
-number of epochs. Optimizers are called in a similar manner compared to
-Keras. Similar to the LearningRateScheduler in Keras’ callbacks, we now
-have several built-in <a href="https://pytorch.org/docs/stable/optim.html?highlight=scheduler#torch.optim.lr_scheduler.StepLR">adaptive learning
-rates</a>.
-We have our training function, now for the test one:</p>
-<pre class="m-code"><span class="c1"># Again, test_loader is a DataLoader instance</span>
-<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">):</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-    <span class="n">test_loss</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="c1"># We don&#39;t want to change the gradients, so we freeze the model here</span>
-    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-        <span class="k">for</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-            <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-            <span class="n">test_loss</span> <span class="o">+=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-            <span class="n">pred</span> <span class="o">=</span> <span class="n">y_hat</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># For binary classification</span>
-            <span class="c1"># For multiclass, pass keepdim=True above</span>
-            <span class="c1"># Now we format the actual target and compare it to the predicted one</span>
-            <span class="n">correct</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-
-    <span class="n">test_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Average loss: </span><span class="si">{</span><span class="n">test_loss</span><span class="si">}</span><span class="se">\n</span><span class="s1">Accuracy: </span><span class="si">{</span><span class="n">correct</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></pre>
-<p>Now we have our model with its foward propagation method, a training
-function, and a testing function. We presume there is a data loading
-function in there somewhere as well. So the final step is putting it all
-together, either in script for or in a <code>main</code> function for CLI
-execution. Here is the last bit in script form:</p>
-<pre class="m-code"><span class="c1"># With Torch, we have to specify GPU/CPU computation</span>
-<span class="n">use_cuda</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">use_cuda</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
-<span class="c1"># First we load the model onto the GPU</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-<span class="c1"># Now we load our optimizer</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
-<span class="c1"># Let&#39;s also apply a learning rate decay</span>
-<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">StepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-<span class="c1"># Now let&#39;s train for 100 epochs</span>
-<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-   <span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
-   <span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">)</span>
-   <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-<span class="c1">#Saving the weights of the model to a pickle file</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;torch_example.pt&#39;</span><span class="p">)</span></pre>
-<p>Whew, that’s a lot of code for a 3 layer MLP! Of course, this is only a
-starting point. You’ll probably want some kind of early stopping
-mechanism, monitoring with tensorboard or custom visualizations, a tqdm
-progress bar, and/or logging. In performing this excercise, I’m of the
-mind that the additional code is actually a good thing, as debugging
-becomes far easier as you can isolate the line causing the issue with a
-visual debugger (<em>cough</em> or a print statement <em>cough</em>), as opposed to
-Keras abstracting that complexity away.</p>
-<p>So this post doesn’t get too long, I’m going to direct you to <a href="https://github.com/dendrondal/CIf3R">the
-repository for my Insight project</a> if you want to see the siamese
-network in PyTorch. Overall, PyTorch is pretty great, and a smoother
-transition than I originally thought. I’ll have to see if this is just a
-honeymoon phase, but I figure there’s likely a reason there are so many
-converts as of late. Happy hacking, and thanks for reading!</p>
-</section>
-<!-- /content -->
         <footer>
           <p>Posted by <a href="/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-05-05T00:00:00-05:00">Tue 05 May 2020</time> in <a href="/category/tutorials.html">Tutorials</a>. Tags: <a href="/tag/keras.html">Keras</a>, <a href="/tag/pytorch.html">PyTorch</a>, <a href="/tag/tensorflow.html">TensorFlow</a>, <a href="/tag/cnns.html">CNNs</a>, <a href="/tag/computer-vision.html">computer vision</a>, <a href="/tag/tutorials.html">tutorials</a>.</p>
         </footer>
+        <div class="m-clearfix-l"></div>
       </article>
       <article>
         <header>
@@ -422,29 +362,12 @@ converts as of late. Happy hacking, and thanks for reading!</p>
         </footer>
         <div class="m-clearfix-l"></div>
       </article>
-      <article>
-        <header>
-          <h1><a href="/making-this-website.html" rel="bookmark" title="Permalink to Making this Website">
-            <time class="m-date" datetime="2019-02-17T00:00:00-06:00">
-              Feb <span class="m-date-day">17</span> 2019
-            </time>
-            Making this Website
-          </a></h1>
-          <p>I wanted to share some of the process used in creating this website. I’m
-          certainly not a frontend developer by any stretch of the imagination, so
-          this was a fully new experience for me. Yes, I had the option of
-          spinning up a squarespace or wordpress site, but where …</p>
-        </header>
-        <footer>
-          <p>Posted by <a href="/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2019-02-17T00:00:00-06:00">Sun 17 February 2019</time> in <a href="/category/projects.html">Projects</a>. Tags: <a href="/tag/flask.html">Flask</a>, <a href="/tag/aws.html">AWS</a>, <a href="/tag/swagger.html">Swagger</a>, <a href="/tag/sqlite.html">SQLite</a>, <a href="/tag/sqalchemy.html">SQAlchemy</a>, <a href="/tag/rest.html">REST</a>.</p>
-        </footer>
-        <div class="m-clearfix-l"></div>
-      </article>
+      <div class="m-article-pagination">page 1 | <a href="/index2.html">older articles &raquo;</a></div>
     </div>
     <nav class="m-navpanel m-col-m-2">
       <h3>Categories</h3>
       <ol class="m-block-bar-m">
-        <li><a href="/category/blog.html">blog</a></li>
+        <li><a href="/category/blog.html">Blog</a></li>
         <li><a href="/category/projects.html">Projects</a></li>
         <li><a href="/category/talks.html">talks</a></li>
         <li><a href="/category/tutorials.html">Tutorials</a></li>
@@ -462,7 +385,7 @@ converts as of late. Happy hacking, and thanks for reading!</p>
         <li class="m-tag-2"><a href="/tag/computer-vision.html">computer vision</a></li>
         <li class="m-tag-2"><a href="/tag/docker.html">Docker</a></li>
         <li class="m-tag-5"><a href="/tag/flask.html">Flask</a></li>
-        <li class="m-tag-2"><a href="/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-4"><a href="/tag/functional-programming.html">functional programming</a></li>
         <li class="m-tag-2"><a href="/tag/gans.html">GANs</a></li>
         <li class="m-tag-2"><a href="/tag/jupyter.html">Jupyter</a></li>
         <li class="m-tag-4"><a href="/tag/keras.html">Keras</a></li>
@@ -486,9 +409,10 @@ converts as of late. Happy hacking, and thanks for reading!</p>
         <li class="m-tag-2"><a href="/tag/sqlite.html">SQLite</a></li>
         <li class="m-tag-2"><a href="/tag/swagger.html">Swagger</a></li>
         <li class="m-tag-4"><a href="/tag/tensorflow.html">TensorFlow</a></li>
-        <li class="m-tag-4"><a href="/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-2"><a href="/tag/testing.html">testing</a></li>
+        <li class="m-tag-5"><a href="/tag/tutorials.html">tutorials</a></li>
         <li class="m-tag-2"><a href="/tag/vaes.html">VAEs</a></li>
-        <li class="m-tag-2"><a href="/tag/wild-python.html">wild python</a></li>
+        <li class="m-tag-4"><a href="/tag/wild-python.html">wild python</a></li>
       </ul>
     </nav>
   </div>
