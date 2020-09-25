@@ -53,7 +53,8 @@ M_FAVICON = ('images/favicon.ico', 'image/x-ico')
 M_SITE_LOGO = 'images/tree.jpg'
 # Navbar
 M_LINKS_NAVBAR1 = [('About', 'pages/about-me.html', 'about', []),
-                   ('Resume', 'pages/Williams_Dal_Resume.pdf', 'resume', []),
+                   ('Resume',
+                    'https://github.com/dendrondal/Portfolio/raw/pelican_migration/content/pages/Williams_Dal_Resume.pdf', 'resume', []),
                     ('GitHub', 'https://github.com/dendrondal', '', []),
                     ('LinkedIn', 'https://linkedin.com/in/dal-williams', '', []),
                     ('Twitter', 'https://twitter.com/dendrondal', '', [])]
