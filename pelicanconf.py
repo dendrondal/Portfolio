@@ -29,13 +29,13 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
 SOCIAL = (('Twitter' 'twitter.com/dendrondal'),
           ('LinkedIn', 'https://www.linkedin.com/in/dal-williams/'),
           ('GitHub', 'github.com/dendrondal'))
-M_SOCIAL_TWITTER_SITE = '@dendrondal' 
+M_SOCIAL_TWITTER_SITE = '@dendrondal'
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+# RELATIVE_URLS = True
 
-#Theme stuff
+# Theme stuff
 THEME = 'm.css/pelican-theme'
 THEME_STATIC_DIR = 'static'
 DIRECT_TEMPLATES = ['index']
@@ -43,6 +43,7 @@ DIRECT_TEMPLATES = ['index']
 M_CSS_FILES = ['https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600',
                '/static/m-dark.css']
 M_THEME_COLOR = '#353535'
+M_HIDE_ARTICLE_SUMMARY = True
 
 PLUGIN_PATHS = ['m.css/plugins']
 PLUGINS = ['m.htmlsanity', 'm.code']
