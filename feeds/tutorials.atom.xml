@@ -32,9 +32,12 @@ using tf.Datasets. TensorBoard was, and still is, the predominant
 monitoring solution for model training, but it’s now fully supported by
 PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
 api decisions, whereas PyTorch seems to bear more similarity to Numpy.&lt;/p&gt;
-&lt;aside class="m-note m-default"&gt;
-&lt;h3&gt;I would highly reccomend checking out the &lt;a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html"&gt;60 minute blitz&lt;/a&gt; for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras&lt;/h3&gt;
-&lt;/aside&gt;
+&lt;div class="admonition attention"&gt;
+&lt;p class="admonition-title"&gt;Attention!&lt;/p&gt;
+&lt;p&gt;I would highly reccomend checking out the &lt;a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html"&gt;60 minute blitz&lt;/a&gt; for
+a grasp of some of the core concepts of PyTorch. This article serves as
+a high-level overview for migration from Keras&lt;/p&gt;
+&lt;/div&gt;
 &lt;/section&gt;
 &lt;section id="defining-the-computation-graph"&gt;
 &lt;h2&gt;Defining the computation graph&lt;/h2&gt;

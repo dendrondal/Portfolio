@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recyclops, pt. 1 | Dal&#39;s Portfolio</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="https://dalwilliams.info/static/m-dark.css" />
+  <link rel="icon" href="https://dalwilliams.info/images/favicon.ico" type="image/x-ico" />
+  <link rel="canonical" href="https://dalwilliams.info/recyclops-pt-1.html" />
+  <link href="https://dalwilliams.info/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio" />
+  <link href="https://dalwilliams.info/feeds/projects.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio | projects" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#353535" />
+  <meta name="twitter:site" content="@dendrondal" />
+  <meta property="og:site_name" content="Dal&#39;s Portfolio" />
+  <meta property="og:title" content="Recyclops, pt. 1" />
+  <meta name="twitter:title" content="Recyclops, pt. 1" />
+  <meta property="og:url" content="https://dalwilliams.info/recyclops-pt-1.html" />
+  <meta property="og:description" content="Back in March, I completed a fellowship with Insight Data Science. For those unfamiliar, Insight has a capstone project, which consists of a data-based product. Unsurprisingly, the process of ideating a data product is incredibly difficult, between the general popularity of data science, the large number of alumni Insight has …" />
+  <meta name="twitter:description" content="Back in March, I completed a fellowship with Insight Data Science. For those unfamiliar, Insight has a capstone project, which consists of a data-based product. Unsurprisingly, the process of ideating a data product is incredibly difficult, between the general popularity of data science, the large number of alumni Insight has …" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:type" content="article" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="https://dalwilliams.info/" id="m-navbar-brand" class="m-col-t-9 m-col-m-none m-left-m"><img src="https://dalwilliams.info/images/tree.jpg" alt="" />Dal&#39;s Portfolio</a>
+      <a id="m-navbar-show" href="#navigation" title="Show navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <a id="m-navbar-hide" href="#" title="Hide navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="https://dalwilliams.info/pages/about-me.html">About</a></li>
+            <li><a href="https://dalwilliams.info/pages/Williams_Dal_Resume.pdf">Resume</a></li>
+            <li><a href="https://github.com/dendrondal">GitHub</a></li>
+            <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
+            <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main>
+<div class="m-container">
+  <div class="m-row">
+    <article class="m-col-m-10 m-nopadb">
+      <header>
+        <h1><a href="https://dalwilliams.info/recyclops-pt-1.html" rel="bookmark" title="Permalink to Recyclops, pt. 1">
+          <time class="m-date" datetime="2020-08-12T00:00:00-05:00">
+            Aug <span class="m-date-day">12</span> 2020
+          </time>
+          Recyclops, pt. 1
+        </a></h1>
+      </header>
+      <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>Back in March, I completed a fellowship with <a href="https://insightfellows.com/data-science">Insight Data Science</a>.
+For those unfamiliar, Insight has a capstone project, which consists of a data-based product.
+Unsurprisingly, the process of ideating a data product is incredibly difficult, between the general popularity of data science, the large number of alumni Insight has now produced, and the grueling 2 week timeline for an MVP with a team of 1.
+After having many ideas shot down, I finally settled on a problem near and dear to me: recycling.
+There exist several &quot;smart&quot; recycling bins <a href="https://www.smithsonianmag.com/innovation/smart-recycling-bin-could-sort-your-waste-you-180964848/">on the market</a>, which have a computer vision component telling you which bin to put your item in.
+However, these bins have fixed guidelines, which does not reflect the large variance in recycling center requirements.
+In fact, this represents a <a href="https://fivethirtyeight.com/features/the-era-of-easy-recycling-may-be-coming-to-an-end/">major issue</a> in recycling centers, resulting in most recycling centers operating at a loss.
+This project seeks to solve the computer vision component of smart recycling.</p>
+<p>Rather than reinvent the wheel, specific pain points were targeted with this project.
+As an example, recycling centers are already highly efficient at <a href="https://medium.com/cleantech-rising/heres-your-guide-to-how-recycling-actually-works-1f3d97b37904">separating different kinds of plastic</a>, but struggle with differentiating between clean and dirty plastic.
+Today I wanted to walk through my journey on this project, including some of the unique challenges faced and how certain decisions were made.
+In part 1, I want to talk about the background and motivations behind this project, as well as the MVP presented in <a href="https://dalwilliams.info/insight-project-demo.html">this post</a>.
+Hopefully, this will help someone who's struggling to bring their app to production.</p>
+<section id="getting-the-mvp">
+<h2>Getting the MVP</h2>
+<p>As alluded to earlier, the ideation phase was in my opinion the most difficult part of this.
+It's one of the worst cases of option paralysis I think I've ever had.
+In addition to that, I experience the ever-present problem of &quot;scope creep&quot;.
+This resulted in me refining my MVP to building two proof-of-concept models: one based off of the University of Tennessee (UTK) recycling guidelines, and one based off of Penn State's guidelines.
+The reason for this targeting is threefold:</p>
+<blockquote>
+<ol>
+<li>Both universities had well-defined guidelines</li>
+<li>College students tend to be more eco-concious</li>
+<li>College campuses give the opportunity of testing these models with appropriate hardware in a controlled, reasonable environment.</li>
+</ol>
+</blockquote>
+<p>As to the last point, the idea with these was to do an IoT type deployment, with an ideal deployment being edge inference on a Raspberry Pi with a cheap camera.
+In the case of insufficient computational power, the Pi can send images through intranet to a central hub to do the heavy lifting, which then sends the prediction back.
+So now that I had the idea, it was time for the technical implementation.
+I tried to implement a test-driven development approach, but that ended up biting me later on.</p>
+<section id="data-gathering-cleaning">
+<h3>Data Gathering &amp; Cleaning</h3>
+<p>I ended up copying the recycling guidelines of the respective universities as nested python dictionaries, which is easiest to understand by looking at the code <a href="https://github.com/dendrondal/Recyclops/blob/master/cif3r/data/recycling_guidelines.py">here</a>.
+Next, I built a web scraper with Selenium to download the images. The filepaths to these images were stored in a SQLite3 database along with relevant metadata.
+The advantage to this approach is that I could operate off of one central table, adding new tables as needed with guidelines for new universities, joining on their subcategories.
+Using SQLite3 had the advantage of bundiling my database with my app, simplifying the prospect of edge computation.
+It's important to note that false positives (i.e. dirty items placed in recycling bins) hurt worse than false negatives, so unless a recyclable category is explicitly defined in university guidelines, it's instead labeled as trash.
+Re-stating that in SQL code:</p>
+<pre class="m-code"><span class="k">SELECT</span>
+    <span class="n">hash</span><span class="p">,</span>
+    <span class="k">CASE</span>
+        <span class="k">WHEN</span><span class="p">(</span><span class="n">recyclable</span> <span class="o">=</span> <span class="s1">&#39;O&#39;</span><span class="p">)</span> <span class="k">THEN</span> <span class="s1">&#39;trash&#39;</span>
+        <span class="k">WHEN</span><span class="p">(</span><span class="n">recyclable</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">stream</span>
+    <span class="k">END</span>
+<span class="k">FROM</span> <span class="o">%</span></pre>
+<p>Here, stream is the major overlying category (paper, plastic, etc) and the wildcard is the university.
+I adapted nomenclature from a <a href="https://www.kaggle.com/twhitehurst3/fastai-v1-waste-classification">previous approach</a>, which used 'O', or organic, for trash.
+The images were hand-validated, which was about as tedious as you might expect.
+This ended up being a massive waste of time, but hindsight is 20:20.</p>
+</section>
+<section id="model-training">
+<h3>Model Training</h3>
+<p>My original idea was to use a pre-trained model with a small size, to evaluate my ability to do edge computation. I used <a href="https://arxiv.org/abs/1801.04381">Mobile Net V2</a> a ResNet architecture that has a built-in pretrained model in Keras. I added a few trainable layers to the end of the pretrained model, and used several image augmentation steps (rotation, shearing, and zoom) to increase the generalizability of the model. Also, I class imbalances in my training data, so undersampling was applied on the majority class (paper in all cases). An F1 score and a confusion matrix was used to evaluate the model. The results were less than ideal, with an F1 score of ~0.6 for both universities.</p>
+</section>
+<section id="deployment">
+<h3>Deployment</h3>
+<p>All of my model training was done on an AWS P2 instance, while I served the model on a far less expensive C5 instance. I wrote a Bootstrap frontend to allow for university selection, and used video capture with OpenCV to allow for inference on a single frame. This prediction was quite sluggish, even on my laptop. Also, getting OpenCV working behind NGINX and Gunicorn presents its own problems.</p>
+</section>
+</section>
+<section id="the-next-steps-lessons-learned">
+<h2>The Next Steps &amp; Lessons Learned</h2>
+<p>In order to create an MVP, I decided to use tried-and-true methods over more experimental ones. It turns out, in retrospect, that this was a mistake. The amount of data required to have a functional MobileNetV2, even with transfer learning, was prohibitive for a single data cleaner, in addition to being painful. A few-shot learning approach would have been a far more productive route, which I'll go into in part 2. In addition, the approach used for deployment was quite painful. If I'd taken a step back and Dockerized my application rather than having to get all of my installation working over SSH, I would have saved a great deal of time. And finally, rather than the traditional Flask+Gunicorn+Nginx setup, I could have (maybe) used <a href="https://www.streamlit.io/">Streamlit</a>, but to be honest, I wasn't aware of its existence at the time.</p>
+</section>
+<!-- /content -->
+      <footer>
+        <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-08-12T00:00:00-05:00">Wed 12 August 2020</time> in <a href="https://dalwilliams.info/category/projects.html">projects</a>. Tags: <a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a>, <a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a>, <a href="https://dalwilliams.info/tag/keras.html">Keras</a>, <a href="https://dalwilliams.info/tag/linux.html">Linux</a>, <a href="https://dalwilliams.info/tag/aws.html">AWS</a>, <a href="https://dalwilliams.info/tag/docker.html">Docker</a>.</p>
+      </footer>
+    </article>
+    <nav class="m-navpanel m-col-m-2">
+      <h3>Categories</h3>
+      <ol class="m-block-bar-m">
+        <li><a href="https://dalwilliams.info/category/blog.html">Blog</a></li>
+        <li><a href="https://dalwilliams.info/category/projects.html">projects</a></li>
+        <li><a href="https://dalwilliams.info/category/talks.html">talks</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorial.html">tutorial</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorials.html">Tutorials</a></li>
+      </ol>
+      <h3>Tag cloud</h3>
+      <ul class="m-tagcloud">
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/airflow.html">Airflow</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/altair.html">Altair</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chatbots.html">chatbots</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/flask.html">Flask</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/gans.html">GANs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/git.html">Git</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jinja.html">Jinja</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/keras.html">Keras</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/latex.html">LaTeX</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/luigi.html">Luigi</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/mongodb.html">MongoDB</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pandas.html">Pandas</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/papermill.html">Papermill</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rest.html">REST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rst.html">rST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/science-writing.html">Science Writing</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/scikit-learn.html">SciKit Learn</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/spacy.html">Spacy</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqalchemy.html">SQAlchemy</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqlite.html">SQLite</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/swagger.html">Swagger</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/testing.html">testing</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vaes.html">VAEs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vim.html">Vim</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</main>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Dal's Portfolio. Powered by <a href="https://getpelican.com">Pelican</a> and <a href="https://mcss.mosra.cz">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

@@ -17,15 +17,6 @@
   <meta property="og:url" content="https://dalwilliams.info/" />
   <meta name="twitter:card" content="summary" />
   <meta property="og:type" content="website" />
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166414162-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-166414162-1');
-  </script>
 </head>
 <body>
 <header><nav id="navigation">
@@ -38,7 +29,7 @@
         <div class="m-row">
           <ol class="m-col-t-12 m-col-m-none">
             <li><a href="https://dalwilliams.info/pages/about-me.html">About</a></li>
-            <li><a href="https://github.com/dendrondal/Portfolio/raw/pelican_migration/content/pages/Williams_Dal_Resume.pdf">Resume</a></li>
+            <li><a href="https://dalwilliams.info/pages/Williams_Dal_Resume.pdf">Resume</a></li>
             <li><a href="https://github.com/dendrondal">GitHub</a></li>
             <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
             <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
@@ -54,6 +45,103 @@
     <div class="m-col-m-10">
       <article>
         <header>
+          <h1><a href="https://dalwilliams.info/recyclops-pt-1.html" rel="bookmark" title="Permalink to Recyclops, pt. 1">
+            <time class="m-date" datetime="2020-08-12T00:00:00-05:00">
+              Aug <span class="m-date-day">12</span> 2020
+            </time>
+            Recyclops, pt. 1
+          </a></h1>
+        </header>
+        <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>Back in March, I completed a fellowship with <a href="https://insightfellows.com/data-science">Insight Data Science</a>.
+For those unfamiliar, Insight has a capstone project, which consists of a data-based product.
+Unsurprisingly, the process of ideating a data product is incredibly difficult, between the general popularity of data science, the large number of alumni Insight has now produced, and the grueling 2 week timeline for an MVP with a team of 1.
+After having many ideas shot down, I finally settled on a problem near and dear to me: recycling.
+There exist several &quot;smart&quot; recycling bins <a href="https://www.smithsonianmag.com/innovation/smart-recycling-bin-could-sort-your-waste-you-180964848/">on the market</a>, which have a computer vision component telling you which bin to put your item in.
+However, these bins have fixed guidelines, which does not reflect the large variance in recycling center requirements.
+In fact, this represents a <a href="https://fivethirtyeight.com/features/the-era-of-easy-recycling-may-be-coming-to-an-end/">major issue</a> in recycling centers, resulting in most recycling centers operating at a loss.
+This project seeks to solve the computer vision component of smart recycling.</p>
+<p>Rather than reinvent the wheel, specific pain points were targeted with this project.
+As an example, recycling centers are already highly efficient at <a href="https://medium.com/cleantech-rising/heres-your-guide-to-how-recycling-actually-works-1f3d97b37904">separating different kinds of plastic</a>, but struggle with differentiating between clean and dirty plastic.
+Today I wanted to walk through my journey on this project, including some of the unique challenges faced and how certain decisions were made.
+In part 1, I want to talk about the background and motivations behind this project, as well as the MVP presented in <a href="https://dalwilliams.info/insight-project-demo.html">this post</a>.
+Hopefully, this will help someone who's struggling to bring their app to production.</p>
+<section id="getting-the-mvp">
+<h2>Getting the MVP</h2>
+<p>As alluded to earlier, the ideation phase was in my opinion the most difficult part of this.
+It's one of the worst cases of option paralysis I think I've ever had.
+In addition to that, I experience the ever-present problem of &quot;scope creep&quot;.
+This resulted in me refining my MVP to building two proof-of-concept models: one based off of the University of Tennessee (UTK) recycling guidelines, and one based off of Penn State's guidelines.
+The reason for this targeting is threefold:</p>
+<blockquote>
+<ol>
+<li>Both universities had well-defined guidelines</li>
+<li>College students tend to be more eco-concious</li>
+<li>College campuses give the opportunity of testing these models with appropriate hardware in a controlled, reasonable environment.</li>
+</ol>
+</blockquote>
+<p>As to the last point, the idea with these was to do an IoT type deployment, with an ideal deployment being edge inference on a Raspberry Pi with a cheap camera.
+In the case of insufficient computational power, the Pi can send images through intranet to a central hub to do the heavy lifting, which then sends the prediction back.
+So now that I had the idea, it was time for the technical implementation.
+I tried to implement a test-driven development approach, but that ended up biting me later on.</p>
+<section id="data-gathering-cleaning">
+<h3>Data Gathering &amp; Cleaning</h3>
+<p>I ended up copying the recycling guidelines of the respective universities as nested python dictionaries, which is easiest to understand by looking at the code <a href="https://github.com/dendrondal/Recyclops/blob/master/cif3r/data/recycling_guidelines.py">here</a>.
+Next, I built a web scraper with Selenium to download the images. The filepaths to these images were stored in a SQLite3 database along with relevant metadata.
+The advantage to this approach is that I could operate off of one central table, adding new tables as needed with guidelines for new universities, joining on their subcategories.
+Using SQLite3 had the advantage of bundiling my database with my app, simplifying the prospect of edge computation.
+It's important to note that false positives (i.e. dirty items placed in recycling bins) hurt worse than false negatives, so unless a recyclable category is explicitly defined in university guidelines, it's instead labeled as trash.
+Re-stating that in SQL code:</p>
+<pre class="m-code"><span class="k">SELECT</span>
+    <span class="n">hash</span><span class="p">,</span>
+    <span class="k">CASE</span>
+        <span class="k">WHEN</span><span class="p">(</span><span class="n">recyclable</span> <span class="o">=</span> <span class="s1">&#39;O&#39;</span><span class="p">)</span> <span class="k">THEN</span> <span class="s1">&#39;trash&#39;</span>
+        <span class="k">WHEN</span><span class="p">(</span><span class="n">recyclable</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span><span class="p">)</span> <span class="k">THEN</span> <span class="n">stream</span>
+    <span class="k">END</span>
+<span class="k">FROM</span> <span class="o">%</span></pre>
+<p>Here, stream is the major overlying category (paper, plastic, etc) and the wildcard is the university.
+I adapted nomenclature from a <a href="https://www.kaggle.com/twhitehurst3/fastai-v1-waste-classification">previous approach</a>, which used 'O', or organic, for trash.
+The images were hand-validated, which was about as tedious as you might expect.
+This ended up being a massive waste of time, but hindsight is 20:20.</p>
+</section>
+<section id="model-training">
+<h3>Model Training</h3>
+<p>My original idea was to use a pre-trained model with a small size, to evaluate my ability to do edge computation. I used <a href="https://arxiv.org/abs/1801.04381">Mobile Net V2</a> a ResNet architecture that has a built-in pretrained model in Keras. I added a few trainable layers to the end of the pretrained model, and used several image augmentation steps (rotation, shearing, and zoom) to increase the generalizability of the model. Also, I class imbalances in my training data, so undersampling was applied on the majority class (paper in all cases). An F1 score and a confusion matrix was used to evaluate the model. The results were less than ideal, with an F1 score of ~0.6 for both universities.</p>
+</section>
+<section id="deployment">
+<h3>Deployment</h3>
+<p>All of my model training was done on an AWS P2 instance, while I served the model on a far less expensive C5 instance. I wrote a Bootstrap frontend to allow for university selection, and used video capture with OpenCV to allow for inference on a single frame. This prediction was quite sluggish, even on my laptop. Also, getting OpenCV working behind NGINX and Gunicorn presents its own problems.</p>
+</section>
+</section>
+<section id="the-next-steps-lessons-learned">
+<h2>The Next Steps &amp; Lessons Learned</h2>
+<p>In order to create an MVP, I decided to use tried-and-true methods over more experimental ones. It turns out, in retrospect, that this was a mistake. The amount of data required to have a functional MobileNetV2, even with transfer learning, was prohibitive for a single data cleaner, in addition to being painful. A few-shot learning approach would have been a far more productive route, which I'll go into in part 2. In addition, the approach used for deployment was quite painful. If I'd taken a step back and Dockerized my application rather than having to get all of my installation working over SSH, I would have saved a great deal of time. And finally, rather than the traditional Flask+Gunicorn+Nginx setup, I could have (maybe) used <a href="https://www.streamlit.io/">Streamlit</a>, but to be honest, I wasn't aware of its existence at the time.</p>
+</section>
+<!-- /content -->
+        <footer>
+          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-08-12T00:00:00-05:00">Wed 12 August 2020</time> in <a href="https://dalwilliams.info/category/projects.html">projects</a>. Tags: <a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a>, <a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a>, <a href="https://dalwilliams.info/tag/keras.html">Keras</a>, <a href="https://dalwilliams.info/tag/linux.html">Linux</a>, <a href="https://dalwilliams.info/tag/aws.html">AWS</a>, <a href="https://dalwilliams.info/tag/docker.html">Docker</a>.</p>
+        </footer>
+      </article>
+      <article>
+        <header>
+          <h1><a href="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" rel="bookmark" title="Permalink to Going Mouseless, or How I Learned to Stop Clicking and Love the Clack">
+            <time class="m-date" datetime="2020-07-25T00:00:00-05:00">
+              Jul <span class="m-date-day">25</span> 2020
+            </time>
+            Going Mouseless, or How I Learned to Stop Clicking and Love the Clack
+          </a></h1>
+          <p>Jokes about googling aside, it's no secret that writing code involves some pretty heavy browser usage.
+          Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each.
+          Though there are browser extensions that help with this …</p>
+        </header>
+        <footer>
+          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-07-25T00:00:00-05:00">Sat 25 July 2020</time> in <a href="https://dalwilliams.info/category/tutorial.html">tutorial</a>. Tags: <a href="https://dalwilliams.info/tag/linux.html">Linux</a>, <a href="https://dalwilliams.info/tag/vim.html">Vim</a>, <a href="https://dalwilliams.info/tag/productivity.html">Productivity</a>.</p>
+        </footer>
+        <div class="m-clearfix-l"></div>
+      </article>
+      <article>
+        <header>
           <h1><a href="https://dalwilliams.info/a-wild-hypothesis-appeared.html" rel="bookmark" title="Permalink to A Wild Hypothesis Appeared!">
             <time class="m-date" datetime="2020-05-29T00:00:00-05:00">
               May <span class="m-date-day">29</span> 2020
@@ -62,166 +150,25 @@
           </a></h1>
           <p>Part 2 of the Wild Python series, focusing on property-based testing</p>
         </header>
-        <div class="m-clearfix-l"></div>
-<!-- content -->
-<aside class="m-note m-default">
-<h3>This article presumes some familiarity with unit and functional testing, as well as pytest. Though there are many tutorials for these topics online, I found less on the Hypothesis library. Moreover, I wrote this article to gain some intuition as to <em>when</em> to use property-based tests rather than example-based tests.</h3>
-</aside>
-<section id="what-is-property-based-testing">
-<h2>What is property-based testing?</h2>
-<p>Putting it rather coarsely, property-based testing (PBT) is a method of brute forcing your tests. Rather than the general workflow of asserting what a function should output with a given example, PBT runs the function multiple times with inputs sampled from a space of all possible examples. You may be thinking &quot;why not just use <code>pytest.mark.parameterize</code>?&quot; The answer is edge cases and other unknown unknowns. In theory, this should catch bugs more quickly, and result in less code necessary for your test suite by not having to manually add pytest marks.</p>
-<p><img alt="image0" src="https://1.bp.blogspot.com/-5n5lQoNvzNU/XAT3u9uu8SI/AAAAAAAAhUo/OMOOhkSYKNMAXaGeW0MfF07uudCWa-HZwCLcBGAs/s1600/everyone.png" style="width: 400px" /></p>
-<p>The introduction to <a href="https://hypothesis.works/articles/getting-started-with-hypothesis/">Hypothesis</a>, a PBT framework for Python, gives a quick rundown of what this might look like. Hypothesis is effectively the Python version of <a href="https://www.youtube.com/watch?v=hXnS_Xjwk2Y">QuickCheck</a>, Haskell's PBT framework. Functional programming languages like Haskell lend themselves well to PBT, due to their heavily mathematical nature. Going through some <a href="https://dev.to/jdsteinhauser/intro-to-property-based-testing-2cj8">properties of mathematical funcitons</a>, their Python equivalents would look something like this:</p>
-<pre class="m-code"><span class="c1"># Associative: a + (b + c) = (a + b) + c</span>
-<span class="k">assert</span> <span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span><span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="p">))</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">)</span>
-<span class="c1"># Commutative: a + b = b + a</span>
-<span class="k">assert</span> <span class="nb">max</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">==</span> <span class="nb">max</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="c1"># Distributive: a(b+c) = ab + ac</span>
-<span class="k">assert</span> <span class="s1">&#39;asdf&#39;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;jkl;&#39;</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="s1">&#39;asdf&#39;</span> <span class="o">+</span> <span class="s1">&#39;jkl;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="c1"># Idiompotent: f(x) = f(f(x))</span>
-<span class="n">lst1</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">lst2</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">lst1</span> <span class="o">==</span> <span class="n">lst2</span>
-<span class="c1"># Identity: f(x, i) = x</span>
-<span class="k">assert</span> <span class="n">lst</span><span class="o">.</span><span class="n">extend</span><span class="p">([])</span> <span class="o">==</span> <span class="n">lst</span>
-<span class="c1"># &#39;Bilbo&#39; testing (there and back again)</span>
-<span class="k">assert</span> <span class="n">lst1</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">lst</span>
-<span class="c1"># No surprise side effects</span>
-<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></pre>
-<p>These are contrived examples, but they should give you some sort of an idea of what the &quot;property&quot; in PBT implies. I originally referred to PBT as brute forcing your tests, but that's only partially true. A good framework, like Hypothesis, will change behavior once an assertion fails, and &quot;shrink&quot; the input it provides until it can provide a <em>minimum working example</em> of what will cause your program to break. This save a lot of guesswork in diagnosing the problem.</p>
-</section>
-<section id="hypothesis-in-action">
-<h2>Hypothesis in Action</h2>
-<p>At its core, Hypothesis builds its test suite around strategies (the <code>st</code> module from here on). These allow for random generation of data types within Python, and allow for parameterization (i.e. an ASCII string with a minimum length of 1). For more complex data types, <code>st.composite</code> can be used. Other important terms are <code>given</code> and <code>assume</code>. The <code>&#64;given</code> decorator is used to express which strategies and boundaries a function should be tested with, and <code>assume</code> removes test cases that we don't care about. The opposite of assume, <code>&#64;example</code>, tells hypothesis to try this test case every single time. A good place for this would be to include a SQL injection attack as an example when testing a Flask function that has a query string.</p>
-<p>Before going into production use cases, let's take one of our contrived unit tests from the previous section and change it to a Hypothesis test. Let's say we're writing our own programming language, and want to make sure our version of Python's <code>upper</code> method work properly. This is an ideal use case for PBT, as we want to make sure this can handle any kind of text:</p>
-<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="k">def</span> <span class="nf">test_upper</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="c1"># Idiompotency</span>
-    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-    <span class="c1"># Distributive (this assumes + is overloaded for string concatenation)</span>
-    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-    <span class="c1"># No side effects</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></pre>
-<p>This is where hypothesis gets its name from, as we could write out the above test like a traditional hypothesis: &quot;Given a string of length &gt; 1, upper will be idiompotent, distributive, and will return a string with the same length as its input.&quot; Then we test it by trying to find a case that falsifies that hypothesis. If we were wanting to extend our new language's functionality by using the <code>extend</code> method (see what I did there?), we would need a more complex data type to test on. This is where composite strategies come in:</p>
-<pre class="m-code"><span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
-<span class="k">def</span> <span class="nf">make_lists</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">from_type</span><span class="p">(),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
-
-<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">make_lists</span><span class="p">())</span>
-<span class="k">def</span> <span class="nf">test_extend</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">lst1</span><span class="p">,</span> <span class="n">lst2</span><span class="p">,</span> <span class="n">lst3</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="n">concat</span> <span class="o">=</span> <span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">))</span>
-    <span class="c1"># Associativity</span>
-    <span class="k">assert</span> <span class="n">concat</span> <span class="o">==</span> <span class="p">(</span><span class="n">lst1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst2</span><span class="p">))</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lst3</span><span class="p">)</span>
-    <span class="c1"># No side effects</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">concat</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">for</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></pre>
-<p>Here we draw 3 lists full of arbitrary data types and lengths with <code>make_lists</code>, and try to combine them. As a fail-safe, we assume that all three lists exist.Not to belabor the point, I will recommend the <a href="https://hypothesis.readthedocs.io/en/latest/data.html">documentation</a> for more examples, and move on to production use cases.</p>
-</section>
-<section id="hypothesis-in-the-wild">
-<h2>Hypothesis in the Wild</h2>
-<p>The <a href="https://github.com/KissPeter/APIFuzzer">APIFuzzer</a> library uses Hypothesis to see if their API testing framework can handle arbitrary JSON. This is trivial to implement in Hypothesis:</p>
-<pre class="m-code"><span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
-<span class="k">def</span> <span class="nf">dict_str</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">dictionaries</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-
-<span class="nd">@st</span><span class="o">.</span><span class="n">composite</span>
-<span class="k">def</span> <span class="nf">list_of_dicts</span><span class="p">(</span><span class="n">draw</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">draw</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">dict_str</span><span class="p">()))</span>
-
-<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dict_str</span><span class="p">())</span>
-<span class="k">def</span> <span class="nf">test_json_data_dict_valid</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-
-<span class="nd">@given</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">list_of_dicts</span><span class="p">())</span>
-<span class="k">def</span> <span class="nf">test_json_data_list_valid</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span></pre>
-<p>Walking through this code, the composite used draws from strategies, producing nonzero sized dictionaries with string keys and values. It can then produce lists of these dicts by drawing from this strategy. It's then used to make sure their <code>json_data</code> function returns the proper type regardless of what is thrown at it. The Hypothesis documentation has an <a href="https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data">even more robust</a> example of generating random JSON by using a recursive strategy. This method uses unbounded types, but we can also add boundary conditions based off of what input sizes/shapes we expect. Here's an example from <a href="https://github.com/pyvista/pyvista">pyvista</a>, a 3D rendering library, where they want to make sure an error is raised when someone tries to use their <code>grid.transform</code> method is called on an improperly shaped array:</p>
-<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">arrays</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">array_shapes</span><span class="p">(</span><span class="n">max_dims</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_side</span><span class="o">=</span><span class="mi">5</span><span class="p">)))</span>
-<span class="k">def</span> <span class="nf">test_transform_should_fail_given_wrong_numpy_shape</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
-    <span class="n">assume</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-        <span class="n">grid</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">array</span><span class="p">)</span></pre>
-<p>Let's move on to something that many data scientists will want to keep in mind, which is determining whether the output of a function is stochastic or deterministic. The <a href="https://github.com/Axelrod-Python/Axelrod">Axelrod</a> library, a game theory simulator in python, does just this with Hypothesis. Here, they test to see if either randomizing the choices of their players at the start by using a <code>Random</code> player or making the decision making of the players less consistent by adding noise.</p>
-<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">floats</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<span class="k">def</span> <span class="nf">test_stochastic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-
-    <span class="n">assume</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Cooperator</span><span class="p">(),</span> <span class="n">axl</span><span class="o">.</span><span class="n">Cooperator</span><span class="p">()</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span>
-
-    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span>
-
-    <span class="n">p1</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">axl</span><span class="o">.</span><span class="n">Match</span><span class="p">((</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">_stochastic</span><span class="p">)</span></pre>
-<p>As you can imagine, this pattern would be ideal to test a bootstrapping or test-train splitting function. Hypothesis also lets you set the seed for the randomization, helping you ensure reproducibility.</p>
-</section>
-<section id="extensibility">
-<h2>Extensibility</h2>
-<p>Hypothesis also has built-in modules for Numpy (<code>hynp</code> below) and Pandas compatibility. Here is a test within Numpy itself that makes sure array printing works with all possible unicode strings:</p>
-<pre class="m-code"><span class="nd">@given</span><span class="p">(</span><span class="n">hynp</span><span class="o">.</span><span class="n">from_dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)))</span>
-<span class="k">def</span> <span class="nf">test_any_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-    <span class="c1"># This test checks that, given any value that can be represented in an</span>
-    <span class="c1"># array of dtype(&quot;U&quot;) (i.e. unicode string), ...</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">text</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">text</span><span class="p">])</span>
-    <span class="c1"># casting a list of them to an array does not e.g. truncate the value</span>
-    <span class="n">assert_equal</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text</span><span class="p">)</span>
-    <span class="c1"># and that np.array2string puts a newline in the expected location</span>
-    <span class="n">expected_repr</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{0!r}</span><span class="s2"> </span><span class="si">{0!r}</span><span class="se">\n</span><span class="s2"> </span><span class="si">{0!r}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">max_line_width</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">assert_equal</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">expected_repr</span><span class="p">)</span></pre>
-<p>As for Pandas, I'll use an example from my <a href="https://github.com/dendrondal/Localvore">Localvore</a> project. I had a function, <code>filter_predictions</code>, that was the core of an ETL pipeline. At a high level, it ingested a dataframe of JSON data of recipes (e.g. {'text': '1 cup flour'}) along with ids and matching model predicitons, and produced another dataframe with ids and ingredient lists (minus adjectives and units, e.g. 'flour'). Given that this was the major bottleneck in my ETL pipeline, I wanted to make sure any errors were caught early. Rather than using a mock DataFrame, I instead decided to let Hypothesis do the heavy lifting for me:</p>
-<pre class="m-code"><span class="nd">@given</span><span class="p">(</span>
-    <span class="n">data_frames</span><span class="p">(</span>
-        <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">column</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span>
-                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                                <span class="n">alphabet</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span>
-            <span class="p">),</span>
-            <span class="n">column</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;raw_ingrs&#39;</span><span class="p">,</span>
-                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span>
-                    <span class="n">st</span><span class="o">.</span><span class="n">dictionaries</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">just</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
-                                    <span class="n">values</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">min_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-                                    <span class="n">alphabet</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">),</span>
-                                    <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-                    <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span>
-            <span class="p">),</span>
-            <span class="n">column</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">,</span>
-                <span class="n">elements</span><span class="o">=</span><span class="n">st</span><span class="o">.</span><span class="n">lists</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">booleans</span><span class="p">(),</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span>
-            <span class="p">),</span>
-        <span class="p">]</span>
-    <span class="p">)</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">test_filter_predictions</span><span class="p">(</span><span class="n">mock_df</span><span class="p">):</span>
-    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mock_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">assume</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mock_df</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">ETL_pipeline</span><span class="o">.</span><span class="n">filter_predictions</span><span class="p">(</span><span class="n">mock_df</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ingredients&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ingredients&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span></pre>
-<p>The <code>data_frames</code> utility can define a set of columns, with names and strategies for each column. I'm also making the assumptions that the dataframe is non-empty, and has the proper number of columns. Note the versatility of strategies available here: one can choose the alphabet to draw from, can create a list of booleans, and can fix a certain value, such as all dictionaries having the 'text' key. This may be a lot of code, but it allows me to be very confident in the code that I write. In addition, I could reuse this mock dataframe strategy by putting it in a function with the <code>composite</code> decorator.</p>
-</section>
-<section id="when-not-to-use-hypothesis">
-<h2>When <em>Not</em> to use Hypothesis</h2>
-<p>Some advice from the Hypothesis documentation gives some good starting wisdom: if you find that you need to parameterize a test extensively, that is a good sight PBT may be effective there. The primary reasons I have found not to use PBT is when either properties are very difficult to think of, or when they add too much overhead to your CI/CD pipeline (the default number of function calls for each Hypothesis test is 200). Between this increase in runtime, mental overhead, and code, PBT should not be your go-to method of testing, but instead a tool in your toolbox. The key factor in deciding what type of test to use isn't necessarily the complexity of your function, but <em>how many different types of input</em> are valid for said function. PBT can also be useful when approaching large legacy codebases. As a particular example, <a href="https://medium.com/criteo-labs/introduction-to-property-based-testing-f5236229d237">this article</a> about PBT in JavaScript managed to find a bug in a 1 million download/day package by treating a certain function as a black box, and making assumptions from there.</p>
-<p>I hope this introduction was helpful to all reading it. My challenge to you is to find a test you've written for a function with many possible input types, and try a property based test there. Let me know how it goes!</p>
-</section>
-<!-- /content -->
         <footer>
           <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-05-29T00:00:00-05:00">Fri 29 May 2020</time> in <a href="https://dalwilliams.info/category/blog.html">Blog</a>. Tags: <a href="https://dalwilliams.info/tag/wild-python.html">wild python</a>, <a href="https://dalwilliams.info/tag/testing.html">testing</a>, <a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a>, <a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a>.</p>
         </footer>
+        <div class="m-clearfix-l"></div>
+      </article>
+      <article>
+        <header>
+          <h1><a href="https://dalwilliams.info/website-redesign.html" rel="bookmark" title="Permalink to Website Redesign">
+            <time class="m-date" datetime="2020-05-10T00:00:00-05:00">
+              May <span class="m-date-day">10</span> 2020
+            </time>
+            Website Redesign
+          </a></h1>
+          <p>Migrating to GitHub pages and simplifying everything</p>
+        </header>
+        <footer>
+          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-05-10T00:00:00-05:00">Sun 10 May 2020</time> in <a href="https://dalwilliams.info/category/blog.html">Blog</a>. Tags: <a href="https://dalwilliams.info/tag/markdown.html">Markdown</a>, <a href="https://dalwilliams.info/tag/rst.html">rST</a>, <a href="https://dalwilliams.info/tag/make.html">Make</a>, <a href="https://dalwilliams.info/tag/git.html">Git</a>, <a href="https://dalwilliams.info/tag/cicd.html">CI/CD</a>, <a href="https://dalwilliams.info/tag/pelican.html">Pelican</a>, <a href="https://dalwilliams.info/tag/flask.html">Flask</a>, <a href="https://dalwilliams.info/tag/jinja.html">Jinja</a>, <a href="https://dalwilliams.info/tag/css.html">CSS</a>.</p>
+        </footer>
+        <div class="m-clearfix-l"></div>
       </article>
       <article>
         <header>
@@ -323,106 +270,66 @@
         </footer>
         <div class="m-clearfix-l"></div>
       </article>
-      <article>
-        <header>
-          <h1><a href="https://dalwilliams.info/thoughts-on-reproducibility-in-data-science.html" rel="bookmark" title="Permalink to Thoughts on Reproducibility in Data Science">
-            <time class="m-date" datetime="2019-03-19T00:00:00-05:00">
-              Mar <span class="m-date-day">19</span> 2019
-            </time>
-            Thoughts on Reproducibility in Data Science
-          </a></h1>
-          <p>Coming from a natural science background, it’s unsurprising that I have
-          some pretty strong opinions on reproducibilty. Most data science
-          textbooks will emphasize the issues of imbalanced data sets,
-          overfitting, and stratification, but this only scratches the surface of
-          potential issues encountered in reproducibility. A great deal of human …</p>
-        </header>
-        <footer>
-          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2019-03-19T00:00:00-05:00">Tue 19 March 2019</time> in <a href="https://dalwilliams.info/category/blog.html">Blog</a>. Tags: <a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a>, <a href="https://dalwilliams.info/tag/bash.html">Bash</a>, <a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a>, <a href="https://dalwilliams.info/tag/papermill.html">Papermill</a>, <a href="https://dalwilliams.info/tag/airflow.html">Airflow</a>, <a href="https://dalwilliams.info/tag/luigi.html">Luigi</a>.</p>
-        </footer>
-        <div class="m-clearfix-l"></div>
-      </article>
-      <article>
-        <header>
-          <h1><a href="https://dalwilliams.info/data-science-for-social-good.html" rel="bookmark" title="Permalink to Data Science for Social Good">
-            <time class="m-date" datetime="2019-03-09T00:00:00-06:00">
-              Mar <span class="m-date-day">09</span> 2019
-            </time>
-            Data Science for Social Good
-          </a></h1>
-          <p>A rundown of several projects taking data-driven approaches to effective altruism.</p>
-        </header>
-        <footer>
-          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2019-03-09T00:00:00-06:00">Sat 09 March 2019</time> in <a href="https://dalwilliams.info/category/blog.html">Blog</a>. Tags: <a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a>, <a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a>.</p>
-        </footer>
-        <div class="m-clearfix-l"></div>
-      </article>
-      <article>
-        <header>
-          <h1><a href="https://dalwilliams.info/generative-models.html" rel="bookmark" title="Permalink to Generative Models">
-            <time class="m-date" datetime="2019-03-09T00:00:00-06:00">
-              Mar <span class="m-date-day">09</span> 2019
-            </time>
-            Generative Models
-          </a></h1>
-          <p>A meetup presentation I gave over the history and state-of-the-art of generative models</p>
-        </header>
-        <footer>
-          <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2019-03-09T00:00:00-06:00">Sat 09 March 2019</time> in <a href="https://dalwilliams.info/category/talks.html">Talks</a>. Tags: <a href="https://dalwilliams.info/tag/gans.html">GANs</a>, <a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a>, <a href="https://dalwilliams.info/tag/vaes.html">VAEs</a>, <a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a>.</p>
-        </footer>
-        <div class="m-clearfix-l"></div>
-      </article>
       <div class="m-article-pagination">page 1 | <a href="https://dalwilliams.info/index2.html">older articles &raquo;</a></div>
     </div>
     <nav class="m-navpanel m-col-m-2">
       <h3>Categories</h3>
       <ol class="m-block-bar-m">
         <li><a href="https://dalwilliams.info/category/blog.html">Blog</a></li>
-        <li><a href="https://dalwilliams.info/category/projects.html">Projects</a></li>
+        <li><a href="https://dalwilliams.info/category/projects.html">projects</a></li>
         <li><a href="https://dalwilliams.info/category/talks.html">talks</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorial.html">tutorial</a></li>
         <li><a href="https://dalwilliams.info/category/tutorials.html">Tutorials</a></li>
       </ol>
       <h3>Tag cloud</h3>
       <ul class="m-tagcloud">
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/airflow.html">Airflow</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/altair.html">Altair</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chatbots.html">chatbots</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/computer-vision.html">computer vision</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
         <li class="m-tag-5"><a href="https://dalwilliams.info/tag/flask.html">Flask</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/gans.html">GANs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/git.html">Git</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jinja.html">Jinja</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a></li>
         <li class="m-tag-4"><a href="https://dalwilliams.info/tag/keras.html">Keras</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/latex.html">LaTeX</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/luigi.html">Luigi</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a></li>
-        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/mongodb.html">MongoDB</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pandas.html">Pandas</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/papermill.html">Papermill</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rest.html">REST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rst.html">rST</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/science-writing.html">Science Writing</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/scikit-learn.html">SciKit Learn</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/spacy.html">Spacy</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqalchemy.html">SQAlchemy</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqlite.html">SQLite</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/swagger.html">Swagger</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/testing.html">testing</a></li>
-        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vaes.html">VAEs</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vim.html">Vim</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
       </ul>
     </nav>
   </div>

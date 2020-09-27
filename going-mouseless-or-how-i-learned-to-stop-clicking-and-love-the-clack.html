@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <title>Going Mouseless, or How I Learned to Stop Clicking and Love the Clack | Dal&#39;s Portfolio</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="https://dalwilliams.info/static/m-dark.css" />
+  <link rel="icon" href="https://dalwilliams.info/images/favicon.ico" type="image/x-ico" />
+  <link rel="canonical" href="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" />
+  <link href="https://dalwilliams.info/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio" />
+  <link href="https://dalwilliams.info/feeds/tutorial.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio | tutorial" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#353535" />
+  <meta name="twitter:site" content="@dendrondal" />
+  <meta property="og:site_name" content="Dal&#39;s Portfolio" />
+  <meta property="og:title" content="Going Mouseless, or How I Learned to Stop Clicking and Love the Clack" />
+  <meta name="twitter:title" content="Going Mouseless, or How I Learned to Stop Clicking and Love the Clack" />
+  <meta property="og:url" content="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" />
+  <meta property="og:description" content="Jokes about googling aside, it&#39;s no secret that writing code involves some pretty heavy browser usage. Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each. Though there are browser extensions that help with this …" />
+  <meta name="twitter:description" content="Jokes about googling aside, it&#39;s no secret that writing code involves some pretty heavy browser usage. Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each. Though there are browser extensions that help with this …" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:type" content="article" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="https://dalwilliams.info/" id="m-navbar-brand" class="m-col-t-9 m-col-m-none m-left-m"><img src="https://dalwilliams.info/images/tree.jpg" alt="" />Dal&#39;s Portfolio</a>
+      <a id="m-navbar-show" href="#navigation" title="Show navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <a id="m-navbar-hide" href="#" title="Hide navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="https://dalwilliams.info/pages/about-me.html">About</a></li>
+            <li><a href="https://dalwilliams.info/pages/Williams_Dal_Resume.pdf">Resume</a></li>
+            <li><a href="https://github.com/dendrondal">GitHub</a></li>
+            <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
+            <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main>
+<div class="m-container">
+  <div class="m-row">
+    <article class="m-col-m-10 m-nopadb">
+      <header>
+        <h1><a href="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" rel="bookmark" title="Permalink to Going Mouseless, or How I Learned to Stop Clicking and Love the Clack">
+          <time class="m-date" datetime="2020-07-25T00:00:00-05:00">
+            Jul <span class="m-date-day">25</span> 2020
+          </time>
+          Going Mouseless, or How I Learned to Stop Clicking and Love the Clack
+        </a></h1>
+      </header>
+      <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>Jokes about googling aside, it's no secret that writing code involves some pretty heavy browser usage.
+Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each.
+Though there are browser extensions that help with this, I knew there had to be a better way.
+This, in a very roundabout way, ended up being the starting point in the journey I'm going to outline in this post.</p>
+<p>On my home home computer, I'm a bit spoiled.
+I have a mechanical keyboard, two monitors (one horizontal &amp; one vertical), and a gaming mouse with side buttons.
+Because of this, I've always preferred doing any heavy-duty developing on my desktop, and saving minor edits/documentation/model training on AWS for my laptop.
+However, for various reasons, I've needed to use my laptop more as of late.
+I thus wanted to make my development environment as comfy and efficient as possible.
+This was done in four ways:</p>
+<p>1. <strong>Tiling Window Management</strong> Though this was the first part of my journey, it actually may be the least important, as it requires a decent amount of overhead to set up.
+That being said, I definitely believe it was worth it.
+Once you get more comfortable with workspace navigation, switching windows, and custom sizing/placement, it's kind of hard to go back.
+But, be very warned that <cite>ricing &lt;https://rizonrice.club/Main_Page&gt;__</cite> your own custom workspace is both very fun and time consuming, so prepare to get sucked down that rabbit hole.
+I started with the most popular and apparently easiest-to-use one, <a href="https://i3wm.org">i3</a>, though there are many more available.
+AwesomeWM is apparently also beginner friendly, and there are some <a href="https://github.com/elenapan/dotfiles/wiki/Gallery">absolutely gorgeous</a> themes you can use for inspiration.
+However, I found the documentation for i3 to be superior, which means it's certainly my reccomendation.</p>
+<p>2. <strong>Browser choices</strong> I've used the Chromium-based Brave for quite awhile, and although I highly approve of their mission statement, I wanted something that was both easier to sync across multiple machines, and far more customizable.
+This lead me to another Chromium-based browser called Vivaldi with a dizzying number of customizations.
+This includes, very importantly, tab stacking and custom hotkeys.
+Thus far, I've had consistently less ram usage and less crashes than Brave, though a similar number of compatibility issues.
+The ability to add <a href="https://vivaldi.com/blog/5-web-panels-to-add-for-programmers/">web panels</a> is also quite nice, though I've had issues with notification badges and ProtonMail staying logged in.
+It turns out the hotkey customizations, while super nice, where mostly irrelevant due to a certain extension.</p>
+<ol start="3">
+<li><strong>Vimium</strong> Not to sound clickbaity, but this is easily my all-time favorite browser extension (minus an ad-blocker, which is thankfully a default in Vivaldi). I had never used Vim before, but this seemed to be unanimously recommended for making the browser more keyboard-friendly. This gif illustrates my favorite of its features, accessed by simply pressing the <cite>f</cite> key (or <cite>F</cite> to open the link in a new tab):</li>
+</ol>
+<p><img alt="image0" src="https://sudipbhandari126.github.io/resources/links-vimium.gif" style="width: 100%" /></p>
+<p>No more scrolling, no more moving the mouse around, just pure touch typing to search and navigate.
+It's an absolute godsend.
+There are also plenty of other keybindings, many of which are just more efficient versions of standard browser ones.
+For example, instead of the standard <cite>ctrl + pgup/pgdown</cite> to navigate tabs, it's simply <cite>J</cite> and <cite>K</cite>, so your hands never have to leave the home keys.
+Unsurprisingly, these are adopted straight from Vim, so you can Guess where this goes next...</p>
+<p>4. <strong>Vim (or vim bindings)</strong> Yes, I've gone full tech hipster here, but hear me out.
+If you're already familiar with the extensive key bindings thanks to Vimium, it actually steepens the learning curve for Vim (and yes, by &quot;steepen&quot;, I mean make easier, as opposed to the colloquially common form of the phrase).
+There are several very useful features that I wish were in other IDEs, such as <cite>dw</cite> to delete a word or <cite>3b</cite> to go back 5 words, or the ability to save markers.
+There several great tutorials outside of the <cite>vimtutor</cite> that comes with vim, including <a href="https://danielmiessler.com/study/vim/">this one</a> and this really entertaining guy's <a href="https://www.youtube.com/channel/UC8ENHE5xdFSwx71u3fDH5Xw">entire YouTube channel</a>.
+I'm not suggesting going fully into Vim, because thankfully other IDEs such as VSCode have plugins for vim bindings.
+The text editor part itself is almost secondary.
+The modal nature of Vim is what makes it exceptional.
+When writing/coding, think of how long is spent editing vs. how long is spent actually writing.
+I'm sure you'll agree that editing takes up far more time.
+Having a way to efficiently navigate and rewrite sections of text is more helpful than I can possibly articulate.
+If you've ever seen a Vim veteran at work, you'll understand what I mean.
+So far I'm absolutely loving it. It feels almost like I'm playing StarCraft again, trying to find the most efficient key combos to max my APM.
+As a very important added bonus, I feel it's making me better at Linux as a whole, considering that the vi normal mode keybindings are the <em>lingua franca</em> of many Linux apps.</p>
+<p>So there you have it.
+How having too many tabs led me on a journey to Vim.
+It definitely takes awhile to learn, but I think it's been worth it.
+Did it make me more efficient, and a faster developer? Time will tell that, but I'll leave you with this very relevant XKCD on the subject.</p>
+<p><img alt="image1" src="https://imgs.xkcd.com/comics/is_it_worth_the_time.png" style="width: 100%" /></p>
+<!-- /content -->
+      <footer>
+        <p>Posted by <a href="https://dalwilliams.info/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-07-25T00:00:00-05:00">Sat 25 July 2020</time> in <a href="https://dalwilliams.info/category/tutorial.html">tutorial</a>. Tags: <a href="https://dalwilliams.info/tag/linux.html">Linux</a>, <a href="https://dalwilliams.info/tag/vim.html">Vim</a>, <a href="https://dalwilliams.info/tag/productivity.html">Productivity</a>.</p>
+      </footer>
+    </article>
+    <nav class="m-navpanel m-col-m-2">
+      <h3>Categories</h3>
+      <ol class="m-block-bar-m">
+        <li><a href="https://dalwilliams.info/category/blog.html">Blog</a></li>
+        <li><a href="https://dalwilliams.info/category/projects.html">projects</a></li>
+        <li><a href="https://dalwilliams.info/category/talks.html">talks</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorial.html">tutorial</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorials.html">Tutorials</a></li>
+      </ol>
+      <h3>Tag cloud</h3>
+      <ul class="m-tagcloud">
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/airflow.html">Airflow</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/altair.html">Altair</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chatbots.html">chatbots</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/flask.html">Flask</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/gans.html">GANs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/git.html">Git</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jinja.html">Jinja</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/keras.html">Keras</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/latex.html">LaTeX</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/luigi.html">Luigi</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/mongodb.html">MongoDB</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pandas.html">Pandas</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/papermill.html">Papermill</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rest.html">REST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rst.html">rST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/science-writing.html">Science Writing</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/scikit-learn.html">SciKit Learn</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/spacy.html">Spacy</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqalchemy.html">SQAlchemy</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqlite.html">SQLite</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/swagger.html">Swagger</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/testing.html">testing</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vaes.html">VAEs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vim.html">Vim</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</main>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Dal's Portfolio. Powered by <a href="https://getpelican.com">Pelican</a> and <a href="https://mcss.mosra.cz">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

@@ -20,15 +20,6 @@
   <meta name="twitter:description" content="Note: this specifically applies to PyTorch 1.5 and tf.Keras 2.1.0. As long as the final number in the version is the same, this should still be applicable, but otherwise, YMMV While completing my fellowship at Insight, I reached a point in my recyclable classification project where …" />
   <meta name="twitter:card" content="summary" />
   <meta property="og:type" content="article" />
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166414162-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-166414162-1');
-  </script>
 </head>
 <body>
 <header><nav id="navigation">
@@ -41,7 +32,7 @@
         <div class="m-row">
           <ol class="m-col-t-12 m-col-m-none">
             <li><a href="https://dalwilliams.info/pages/about-me.html">About</a></li>
-            <li><a href="https://github.com/dendrondal/Portfolio/raw/pelican_migration/content/pages/Williams_Dal_Resume.pdf">Resume</a></li>
+            <li><a href="https://dalwilliams.info/pages/Williams_Dal_Resume.pdf">Resume</a></li>
             <li><a href="https://github.com/dendrondal">GitHub</a></li>
             <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
             <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
@@ -62,12 +53,6 @@
           </time>
           Migrating from Keras to PyTorch in 2020
         </a></h1>
-        <p><em>Note: this specifically applies to PyTorch 1.5 and tf.Keras 2.1.0. As
-        long as the final number in the version is the same, this should still
-        be applicable, but otherwise, YMMV</em></p>
-        <p>While completing my fellowship at <a href="insightdatascience.com">Insight</a>,
-        I reached a point in my <a href="github.com/dendrondal/CIf3R">recyclable classification
-        project</a> where …</p>
       </header>
       <div class="m-clearfix-l"></div>
 <!-- content -->
@@ -99,9 +84,12 @@ using tf.Datasets. TensorBoard was, and still is, the predominant
 monitoring solution for model training, but it’s now fully supported by
 PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
 api decisions, whereas PyTorch seems to bear more similarity to Numpy.</p>
-<aside class="m-note m-default">
-<h3>I would highly reccomend checking out the <a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html">60 minute blitz</a> for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras</h3>
-</aside>
+<div class="admonition attention">
+<p class="admonition-title">Attention!</p>
+<p>I would highly reccomend checking out the <a href="https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html">60 minute blitz</a> for
+a grasp of some of the core concepts of PyTorch. This article serves as
+a high-level overview for migration from Keras</p>
+</div>
 </section>
 <section id="defining-the-computation-graph">
 <h2>Defining the computation graph</h2>
@@ -310,51 +298,60 @@ converts as of late. Happy hacking, and thanks for reading!</p>
       <h3>Categories</h3>
       <ol class="m-block-bar-m">
         <li><a href="https://dalwilliams.info/category/blog.html">Blog</a></li>
-        <li><a href="https://dalwilliams.info/category/projects.html">Projects</a></li>
+        <li><a href="https://dalwilliams.info/category/projects.html">projects</a></li>
         <li><a href="https://dalwilliams.info/category/talks.html">talks</a></li>
+        <li><a href="https://dalwilliams.info/category/tutorial.html">tutorial</a></li>
         <li><a href="https://dalwilliams.info/category/tutorials.html">Tutorials</a></li>
       </ol>
       <h3>Tag cloud</h3>
       <ul class="m-tagcloud">
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/airflow.html">Airflow</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/altair.html">Altair</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/aws.html">AWS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/bash.html">Bash</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/bayesian-stats.html">Bayesian stats</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chatbots.html">chatbots</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/chemistry.html">chemistry</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/computer-vision.html">computer vision</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/docker.html">Docker</a></li>
         <li class="m-tag-5"><a href="https://dalwilliams.info/tag/flask.html">Flask</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/functional-programming.html">functional programming</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/gans.html">GANs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/git.html">Git</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jinja.html">Jinja</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/jupyter.html">Jupyter</a></li>
         <li class="m-tag-4"><a href="https://dalwilliams.info/tag/keras.html">Keras</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/latex.html">LaTeX</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/linux.html">Linux</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/luigi.html">Luigi</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/make.html">Make</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/markdown.html">Markdown</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/microsoft.html">Microsoft</a></li>
-        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/mongodb.html">MongoDB</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pandas.html">Pandas</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/papermill.html">Papermill</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/pytorch.html">PyTorch</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/reproducibility.html">reproducibility</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rest.html">REST</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/rst.html">rST</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/science-writing.html">Science Writing</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/scikit-learn.html">SciKit Learn</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/spacy.html">Spacy</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqalchemy.html">SQAlchemy</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/sqlite.html">SQLite</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/swagger.html">Swagger</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/tensorflow.html">TensorFlow</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/testing.html">testing</a></li>
-        <li class="m-tag-5"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/tutorials.html">tutorials</a></li>
         <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vaes.html">VAEs</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.info/tag/vim.html">Vim</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.info/tag/wild-python.html">wild python</a></li>
       </ul>
     </nav>
   </div>
