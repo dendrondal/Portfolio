@@ -1,7 +1,7 @@
 Migrating from Keras to PyTorch in 2020
 #######################################
 
-:thumbnail: https://pytorch.org/assets/images/pytorch-logo.png 
+:thumbnail: https://pytorch.org/assets/images/pytorch-logo.png
 :category: Tutorials
 :date: 2020-05-05
 :tags: Keras, PyTorch, TensorFlow, CNNs, computer vision, tutorials
@@ -38,7 +38,10 @@ monitoring solution for model training, but it’s now fully supported by
 PyTorch. Finally, in my opinion, TensorFlow has made some rather strange
 api decisions, whereas PyTorch seems to bear more similarity to Numpy.
 
-.. note-default:: I would highly reccomend checking out the `60 minute blitz <https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html>`__ for a grasp of some of the core concepts of PyTorch. This article serves as a high-level overview for migration from Keras
+.. attention::
+    I would highly reccomend checking out the `60 minute blitz <https://pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html>`__ for
+    a grasp of some of the core concepts of PyTorch. This article serves as
+    a high-level overview for migration from Keras
 
 Defining the computation graph
 ------------------------------
@@ -182,7 +185,7 @@ flexibility.
    def train(model, device, train_loader, optimizer, epoch):
        model.train()
        for batch, (X, y) in enumerate(train_loader):
-           # Assuming X and y are torch tensors, you can also just call X.cuda() instead if 
+           # Assuming X and y are torch tensors, you can also just call X.cuda() instead if
            # you know you don't need to switch devices.
            X, y = X.to(device), y.to(device)
            # We re-instantiate the gradients during each iteration
@@ -220,7 +223,7 @@ We have our training function, now for the test one:
                # For multiclass, pass keepdim=True above
                # Now we format the actual target and compare it to the predicted one
                correct += pred.eq(y.view_as(pred)).sum().item()
-       
+
        test_loss /= len(test_loader.dataset)
        print(f'Average loss: {test_loss}\nAccuracy: {correct/len(test_loader.dataset)*100}')
 
