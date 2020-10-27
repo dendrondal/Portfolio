@@ -1,5 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - tutorial</title><link href="https://dalwilliams.info/" rel="alternate"></link><link href="https://dalwilliams.info/feeds/tutorial.atom.xml" rel="self"></link><id>https://dalwilliams.info/</id><updated>2020-07-25T00:00:00-05:00</updated><entry><title>Going Mouseless, or How I Learned to Stop Clicking and Love the Clack</title><link href="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" rel="alternate"></link><published>2020-07-25T00:00:00-05:00</published><updated>2020-07-25T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.info,2020-07-25:/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html</id><summary type="html">&lt;p&gt;Jokes about googling aside, it's no secret that writing code involves some pretty heavy browser usage.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - tutorial</title><link href="https://dalwilliams.info/" rel="alternate"></link><link href="https://dalwilliams.info/feeds/tutorial.atom.xml" rel="self"></link><id>https://dalwilliams.info/</id><updated>2020-10-16T00:00:00-05:00</updated><entry><title>Packaging with Poetry and Pipx!</title><link href="https://dalwilliams.info/packaging-with-poetry-and-pipx.html" rel="alternate"></link><published>2020-10-16T00:00:00-05:00</published><updated>2020-10-16T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.info,2020-10-16:/packaging-with-poetry-and-pipx.html</id><summary type="html">&lt;p&gt;Ask most Python devs the largest shortcoming of the language, and they'll most likely say one of two things: the lack of &lt;a href="https://talkpython.fm/episodes/show/245/python-packaging-landscape-in-2020"&gt;mobile presence&lt;/a&gt; or the difficulties with packaging. It's easy to be jealous of Go/Rust programmers' ability to package everything into a binary install, or C# devs putting …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Ask most Python devs the largest shortcoming of the language, and they'll most likely say one of two things: the lack of &lt;a href="https://talkpython.fm/episodes/show/245/python-packaging-landscape-in-2020"&gt;mobile presence&lt;/a&gt; or the difficulties with packaging. It's easy to be jealous of Go/Rust programmers' ability to package everything into a binary install, or C# devs putting their app into an exe. Python may not have this luxury, but that doesn't negate its ability to make clean, intuitive CLIs in a short period of time.&lt;/p&gt;
+&lt;p&gt;The versioning difficulties are compounded when you try to share your creation with a non-technical audience. It's unreasonable to expect your end-users to have modern Python installed, or to even know what that is in the first place. However, even scientists who have never coded in their life probably have experience with scripting via Excel, LabView, Origin, Igor, or many other macro-based apps. As I couldn't find a tutorial on this exact topic when packaging several tools I wrote for my graduate work, I decided to write one for future devs/scientists trying to do the same.&lt;/p&gt;
+&lt;section id="two-solutions"&gt;
+&lt;h2&gt;Two solutions&lt;/h2&gt;
+&lt;p&gt;This can be solved by either a lightweight or more versatile heavyweight approach. The lightweight approach involves &lt;a href="https://pipxproject.github.io/pipx/"&gt;pipx&lt;/a&gt;, a utility that isolates a CLI and its requirements in a venv and adds them to the &lt;cite&gt;PATH&lt;/cite&gt; automatically. It's pretty great at what it does, and I've found it to be the most pain-free way to install things like Black or Poetry globally without breaking any dependencies or builds.&lt;/p&gt;
+&lt;p&gt;Speaking of &lt;a href="https://python-poetry.org/"&gt;Poetry&lt;/a&gt;, it is actually vital to both of these solutions. For those unfamiliar, Poetry is an all-in-one dependency management, venv, and packaging utility. It uses the rather friendly TOML language to define versions in a fuzzy manner, and will basically refuse to install anything if there's a version mismatch, e.g. one app requires python 3.6.4+, but the project only requires 3.6.0+. These requirements are also locked in place, so people can add dependencies asynchronously without worrying about breaking the build, because poetry will throw a ton of errors your way. It also works very nicely with &lt;a href="https://github.com/pyenv/pyenv"&gt;pyenv&lt;/a&gt;, and allows you to export your requirements to the classic &lt;cite&gt;requirements.txt&lt;/cite&gt;.&lt;/p&gt;
+&lt;p&gt;The latter is important because of the heavyweight solution: Docker. Pipx installs dependencies via pip. If you have non-pip dependencies, Docker is likely the way to go. An example in my recent past is a project that required a LaTeX install, which can be &lt;a href="https://dalwilliams.info/lessons-learned-from-writing-a-phd-dissertation-in-markdown.html"&gt;quite painful&lt;/a&gt; and is prone to OS-dependent errors. So, I wrapped everything up in a &lt;a href="https://github.com/dendrondal/phd_thesis_markdown"&gt;Docker container&lt;/a&gt;, and everything worked perfectly. However, this takes quite a bit more overhead on the end-users part, and requires more space to be used. Docker is complex enough that it would require another tutorial, but thankfully there are already many &lt;a href="https://pythonspeed.com/"&gt;good ones&lt;/a&gt; out there.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="packaging-testing"&gt;
+&lt;h2&gt;Packaging &amp;amp; Testing&lt;/h2&gt;
+&lt;p&gt;Now that we know our options, let's go through how to get this up and working. I'll be using the actual project that inspired this post, &lt;a href="https://github.com/dendrondal/instrumentools"&gt;instrumentools&lt;/a&gt;, as an example, but this approach should be relatively agnostic. That is, whether you use &lt;a href="https://realpython.com/command-line-interfaces-python-argparse/"&gt;argparse&lt;/a&gt;, &lt;a href="https://click.palletsprojects.com/en/7.x/"&gt;click&lt;/a&gt;, or &lt;a href="https://typer.tiangolo.com/"&gt;typer&lt;/a&gt; to create your CLI, these steps should serve you regardless. Let's first go through a basic idea of how to structure this project:&lt;/p&gt;
+&lt;pre&gt;.
+|── poetry.lock
+|── pyproject.toml
+|── README.md
+|── instrumentools
+|   └── __init__.py
+|       CAC.py
+|       TEM.py
+|       thermal_analysis.py&lt;/pre&gt;
+&lt;p&gt;The key factor is that each of your CLI components are stored in modules within the parent directory. This allows you to define them as entrypoints within your &lt;cite&gt;pyproject.toml&lt;/cite&gt;:&lt;/p&gt;
+&lt;pre class="m-code"&gt;&lt;span class="k"&gt;[tool.poetry.scripts]&lt;/span&gt;
+&lt;span class="n"&gt;tem_analysis&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;instrumentools.TEM:main&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;cac_analysis&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;instrumentools.CAC:cac_graphing&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;thermal_analysis&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;instrumentools.thermal_analysis:main&amp;quot;&lt;/span&gt;&lt;/pre&gt;
+&lt;p&gt;This creates symlinks to Python executing the &lt;cite&gt;main&lt;/cite&gt; function in the &lt;cite&gt;cli.py&lt;/cite&gt; file of each module. To test whether this worked, you first need to run &lt;cite&gt;poetry install&lt;/cite&gt; to set up the links, and run &lt;cite&gt;poetry run FEATURE&lt;/cite&gt;, where feature could be tem_analysis, cac_analysis, or thermal_analysis in the case above. Alternatively, you could use click to allow multiple entrypoints via a &lt;a href="https://click.palletsprojects.com/en/7.x/commands/"&gt;single command line script&lt;/a&gt;, which could be better in terms of namespace pollution. I'm sure there are also ways to do this with the other CLI software listed above.&lt;/p&gt;
+&lt;aside class="m-block m-primary"&gt;
+&lt;h3&gt;Ideally, it would make more sense to include each feature as a package rather than a module, making your project more modular and less cluttered. Unfortunately, I have not found a way to do this with Poetry's scripts command in a way that pipx understands.&lt;/h3&gt;
+&lt;/aside&gt;
+&lt;p&gt;As mentioned before, poetry makes packaging very easy. First, you should create an account on &lt;a href="https://test.pypi.org/"&gt;test.pypi.org&lt;/a&gt;. Just to make things easier and safer, I would recommend going to account settings and getting an API key. Back on the command line, do this:&lt;/p&gt;
+&lt;pre class="m-code"&gt;$ poetry config respositories.testpypi.url https://test.pypi.org/legacy/
+$ poetry config pypi-token.testpypi &amp;lt;YOUR_API_KEY&amp;gt;
+$ poetry publish -r testpypi --build&lt;/pre&gt;
+&lt;p&gt;As of Poetry 1.0, having the legacy prefix for testpypi is important. You can view your configuration settings using &lt;cite&gt;poetry config --list&lt;/cite&gt;, but your api key will be hidden. After running the final command, your package should show up on your testpypi account. You will generate both zipped source code and a &lt;a href="https://realpython.com/python-wheels/"&gt;wheel&lt;/a&gt; in the newly created &lt;cite&gt;dist&lt;/cite&gt; folder within your repository. There are multiple ways to test whether or not this worked. Note that pipx takes awhile to sync with your remote repository, so the local version may work better in this case:&lt;/p&gt;
+&lt;pre class="m-code"&gt;&lt;span class="c1"&gt;# Local installation&lt;/span&gt;
+pipx run --spec PATH_TO_YOUR_PROJECT/dist/VERSION.whl FEATURE
+
+&lt;span class="c1"&gt;# Remote install&lt;/span&gt;
+pipx run WHEEL_URL FEATURE&lt;/pre&gt;
+&lt;p&gt;Here, your &lt;cite&gt;WHEEL_URL&lt;/cite&gt; can be found under the link for the current release, in the releases page of your project on testpypi. Registering your project to PyPi goes through a very similar process to the test server, just with pypi.org instead, so you can effectively repeat the steps above once you're comfortable with the result. Then by running &lt;cite&gt;pipx install instrumentools&lt;/cite&gt;, every command works as expected. As with any programming endeavor, make sure that your code is well-documented! It's important that the end-user doesn't need to memorize commands and can get a nice set of instructions by using &lt;cite&gt;--help&lt;/cite&gt;:&lt;/p&gt;
+&lt;pre class="m-code"&gt;Usage: cac_analysis &lt;span class="o"&gt;[&lt;/span&gt;OPTIONS&lt;span class="o"&gt;]&lt;/span&gt;
+
+Graphs .csv output from Bruker UV-Vis software. Outputs stacked UV-vis
+spectra and wavelength &lt;span class="o"&gt;(&lt;/span&gt;or wavelength raio, depending on dye&lt;span class="o"&gt;)&lt;/span&gt; vs.
+log&lt;span class="o"&gt;(&lt;/span&gt;concentration&lt;span class="o"&gt;)&lt;/span&gt; spectra as .png files in the same directory as .csv
+file.
+
+Options:
+  --path PATH      Full path to .csv file
+  --wv_range TEXT  Range of wavelengths &lt;span class="o"&gt;(&lt;/span&gt;i.e. max - min&lt;span class="o"&gt;)&lt;/span&gt;
+  --min_conc TEXT  Minimum concentration, in mg/mL
+  --max_conc TEXT  Maximum concentration, in mg/mL
+  --step TEXT      Total number of samples in csv
+  --vb1 TEXT       Lambda max/first vibronic band
+  --vb3 TEXT       If you are comparing the first and third vibronic band &lt;span class="k"&gt;for&lt;/span&gt;
+                   a dye, &lt;span class="o"&gt;(&lt;/span&gt;i.e. pyrene&lt;span class="o"&gt;)&lt;/span&gt;, enter it here. Otherwise, just press
+                   enter
+
+  --help           Show this message and exit.&lt;/pre&gt;
+&lt;/section&gt;
+&lt;section id="closing-thoughts"&gt;
+&lt;h2&gt;Closing Thoughts&lt;/h2&gt;
+&lt;p&gt;I hope this is a useful tutorial for anyone trying to get a CLI to a broader audience. Though most scientists are primarily used to working with a GUI-based UX, it shouldn't take long to evangelize the advantages of using CLIs for particularly tedious graph creation or simple data analysis. These tools certainly exist in the form of Origin/VBA macros, but Python tends to lend itself to much cleaner code in my personal experience. Even better, having Pipx or Docker makes software that is less likely to break down the road or break system installations.&lt;/p&gt;
+&lt;/section&gt;
+</content><category term="tutorial"></category><category term="Linux"></category><category term="Scientific Python"></category><category term="Docker"></category><category term="Poetry"></category><category term="pipx"></category><category term="chemistry"></category></entry><entry><title>Going Mouseless, or How I Learned to Stop Clicking and Love the Clack</title><link href="https://dalwilliams.info/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html" rel="alternate"></link><published>2020-07-25T00:00:00-05:00</published><updated>2020-07-25T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.info,2020-07-25:/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html</id><summary type="html">&lt;p&gt;Jokes about googling aside, it's no secret that writing code involves some pretty heavy browser usage.
 Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each.
 Though there are browser extensions that help with this …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Jokes about googling aside, it's no secret that writing code involves some pretty heavy browser usage.
 Like may people, I used to be one of those who opened so many tabs that I could no longer see the title on each.
