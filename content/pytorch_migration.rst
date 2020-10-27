@@ -2,7 +2,7 @@ Migrating from Keras to PyTorch in 2020
 #######################################
 
 :thumbnail: https://pytorch.org/assets/images/pytorch-logo.png
-:category: Tutorials
+:category: Tutorial
 :date: 2020-05-05
 :tags: Keras, PyTorch, TensorFlow, CNNs, computer vision, tutorials
 
