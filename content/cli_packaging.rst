@@ -4,7 +4,7 @@ Packaging with Poetry and Pipx!
 :thumbnail:
 :category: tutorial
 :date: 2020-10-16
-:tags: Linux, Scientific Python, Docker, Poetry, pipx
+:tags: Linux, Scientific Python, Docker, Poetry, pipx, chemistry
 
 Ask most Python devs the largest shortcoming of the language, and they'll most likely say one of two things: the lack of `mobile presence <https://talkpython.fm/episodes/show/245/python-packaging-landscape-in-2020>`_ or the difficulties with packaging. It's easy to be jealous of Go/Rust programmers' ability to package everything into a binary install, or C# devs putting their app into an exe. Python may not have this luxury, but that doesn't negate its ability to make clean, intuitive CLIs in a short period of time.
 
@@ -24,11 +24,11 @@ Now that we know our options, let's go through how to get this up and working. I
 ::
 
     .
-    ├── poetry.lock
-    ├── pyproject.toml
-    ├── README.md
-    ├── instrumentools
-    │   └── __init__.py
+    |── poetry.lock
+    |── pyproject.toml
+    |── README.md
+    |── instrumentools
+    |   └── __init__.py
     |       CAC.py
     |       TEM.py
     |       thermal_analysis.py
@@ -45,8 +45,7 @@ The key factor is that each of your CLI components are stored in modules within 
 
 This creates symlinks to Python executing the `main` function in the `cli.py` file of each module. To test whether this worked, you first need to run `poetry install` to set up the links, and run `poetry run FEATURE`, where feature could be tem_analysis, cac_analysis, or thermal_analysis in the case above. Alternatively, you could use click to allow multiple entrypoints via a `single command line script <https://click.palletsprojects.com/en/7.x/commands/>`__, which could be better in terms of namespace pollution. I'm sure there are also ways to do this with the other CLI software listed above.
 
-.. text-info::
-
+.. block-primary::
         Ideally, it would make more sense to include each feature as a package rather than a module, making your project more modular and less cluttered. Unfortunately, I have not found a way to do this with Poetry's scripts command in a way that pipx understands.
 
 
@@ -68,9 +67,7 @@ As of Poetry 1.0, having the legacy prefix for testpypi is important. You can vi
    # Remote install
    pipx run WHEEL_URL FEATURE
 
-Here, your `WHEEL_URL` can be found under the link for the current release, in the releases page of your project on testpypi.
-
-Registering your project to PyPi goes through a very similar process to the test server, just with pypi.org instead, so you can effectively repeat the steps above once you're comfortable with the result. Then by running `pipx install instrumentools`, every command works as expected. As with any programming endeavor, make sure that your code is well-documented! It's important that the end-user doesn't need to memorize commands and can get a nice set of instructions by using `--help`:
+Here, your `WHEEL_URL` can be found under the link for the current release, in the releases page of your project on testpypi. Registering your project to PyPi goes through a very similar process to the test server, just with pypi.org instead, so you can effectively repeat the steps above once you're comfortable with the result. Then by running `pipx install instrumentools`, every command works as expected. As with any programming endeavor, make sure that your code is well-documented! It's important that the end-user doesn't need to memorize commands and can get a nice set of instructions by using `--help`:
 
 .. code:: bash
 
