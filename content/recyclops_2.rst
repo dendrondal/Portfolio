@@ -1,9 +1,13 @@
 Recyclops, pt. 2
 ----------------
 
+:thumbnail:
 :status: draft
+:category: projects
+:date: 2020-20-27
+:tags: Computer Vision, PyTorch, Keras, Linux, AWS, Docker
 
-In `part one`_, I covered the background behind recyclops up until the point of `this presentation`_.In this part, I'm going to focus on how my product was improved from this MVP.
+In `part one`_, I covered the background behind recyclops up until the point of `this presentation`_ .In this part, I'm going to focus on how my product was improved from this MVP.
 
 Few(er) shot learning
 ----------------------
@@ -23,6 +27,7 @@ ProtoNet, or prototypical networks, work similarly to siamese networks in that t
 
 Evaluating performance
 ------------------------
+In the case of these models, two factors must be evaluated. The first is whether a good representation of the data is learned, and the second is classification accuracy. If classification accuracy is low, a likely reason is the few-shot learning algorithm did not learn an accurate representation of the data.
 
 Deployment
 ----------
