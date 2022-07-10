@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bridging the Temporal Chasm | Dal&#39;s Portfolio</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="https://dalwilliams.com/static/m-dark.css" />
+  <link rel="icon" href="https://dalwilliams.com/images/favicon.ico" type="image/x-ico" />
+  <link rel="canonical" href="https://dalwilliams.com/bridging-the-temporal-chasm.html" />
+  <link href="https://dalwilliams.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio" />
+  <link href="https://dalwilliams.com/feeds/blog.atom.xml" type="application/atom+xml" rel="alternate" title="Dal&#39;s Portfolio | blog" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#353535" />
+  <meta name="twitter:site" content="@dendrondal" />
+  <meta property="og:site_name" content="Dal&#39;s Portfolio" />
+  <meta property="og:title" content="Bridging the Temporal Chasm" />
+  <meta name="twitter:title" content="Bridging the Temporal Chasm" />
+  <meta property="og:url" content="https://dalwilliams.com/bridging-the-temporal-chasm.html" />
+  <meta property="og:description" content="A brief update after a long hiatus" />
+  <meta name="twitter:description" content="A brief update after a long hiatus" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:type" content="article" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166414162-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-166414162-1');
+  </script>
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="https://dalwilliams.com/" id="m-navbar-brand" class="m-col-t-9 m-col-m-none m-left-m"><img src="https://dalwilliams.com/images/tree.jpg" alt="" />Dal&#39;s Portfolio</a>
+      <a id="m-navbar-show" href="#navigation" title="Show navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <a id="m-navbar-hide" href="#" title="Hide navigation" class="m-col-t-3 m-hide-m m-text-right"></a>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-12 m-col-m-none">
+            <li><a href="https://dalwilliams.com/pages/about-me.html">About</a></li>
+            <li><a href="https://github.com/dendrondal/Portfolio/raw/pelican_migration/content/pages/Williams_Dal_Resume.pdf">Resume</a></li>
+            <li><a href="https://github.com/dendrondal">GitHub</a></li>
+            <li><a href="https://linkedin.com/in/dal-williams">LinkedIn</a></li>
+            <li><a href="https://twitter.com/dendrondal">Twitter</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main>
+<div class="m-container">
+  <div class="m-row">
+    <article class="m-col-m-10 m-nopadb">
+      <header>
+        <h1><a href="https://dalwilliams.com/bridging-the-temporal-chasm.html" rel="bookmark" title="Permalink to Bridging the Temporal Chasm">
+          <time class="m-date" datetime="2022-06-01T00:00:00-05:00">
+            Jun <span class="m-date-day">01</span> 2022
+          </time>
+          Bridging the Temporal Chasm
+        </a></h1>
+      </header>
+      <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>So, it's clearly been awhile since I've written anything here. There are multiple reasons why this is the case. One of the main reasons
+is trying to determine in what direction this blog should go. Its
+primary goal was to serve as a portfolio, but honestly, I haven’t been
+coding that much in my spare time. This makes sense, given how much I
+code for work, and also, I’m sure both my eyes and joints are thankful
+for the fact that I try to limit my time in front of a screen. (I’d love
+to share what I’ve been working on at <a href="kebotix.com">Kebotix</a>, but that’s quite
+confidential…) Instead of being a “portfolio”, several articles, like
+the <a href="https://dalwilliams.com/tag/wild-python.html">Wild Python</a> series, served as both an excuse to get me to
+read more source code and as small tutorials into various programming
+topics. However, these articles, as well as many other programming
+tutorials, textbook and otherwise, have the issue that they go stale.
+This doesn’t matter as much for the Wild Python articles, but it very
+much matters for articles like the <a href="https://dalwilliams.com/a-wild-itertools-appeared.html">functional programming</a> and
+<a href="https://dalwilliams.com/migrating-from-keras-to-pytorch-in-2020.html">image classification</a> ones. Since this blog is <a href="https://dalwilliams.com/website-redesign.html">fully
+static</a>, and served on GitHub, there may be a way to build a CI/CD
+pipeline to fix this, but that would certainly be its own post. Also,
+there’s the question of whether a blog is even worth pursuing, or could
+I accomplish the same things in 360 characters or less?</p>
+<p>I’m going to start out with a TL;DR of some of my favorite pieces of
+tech and new principles that I’ve been working with for the last year.</p>
+<section id="first-things-first-this-article">
+<h2>First things first: this article</h2>
+<p>In all of the journal articles, preprints, and blog posts I’ve read over
+the last year, this one certainly had the biggest influence on me. It’s
+called <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">The Law of Leaky
+Abstractions</a>.
+One of the most impressive things about this article is the way it
+applies to both computer science and chemistry (and any other field in
+which abstractions are used, which is basically everything). The other
+absolutely mind blowing thing, for those who don’t plan on clicking on
+the link, is when the article was written. I thought it had been written
+last year, until he started talking about Visual Basic and Internet
+Explorer internals. He makes some rather prophetic claims about the
+future of software, which have certainly come true. This has spurred me
+on to learn a language closer to Machine Code, which brings me to:</p>
+</section>
+<section id="go">
+<h2>Go</h2>
+<p>I’m a big fan of the <a href="https://en.wikipedia.org/wiki/Unix_philosophy">Unix Philosophy</a> which can be approximated to
+“Don’t let your feature scope creep up on you.” Go very much adopts this
+principle, not trying to be everything to everyone, but fantastic for a
+subset of applications for a subset of developers. This also makes the
+language restrictive, which isn’t a bad thing, given that there’s
+effectively only one way to write something out. No, there isn’t room
+for brilliant &amp; creative one-liners (or the <a href="https://www.youtube.com/watch?v=m40YOZr1nxQ">BEAUTIFUL syntax and semantics offered by Scala</a>, but it provides the monumental
+benefit of the language easy to read (and thus, maintain). Though the
+syntax is strange to me at times, its <a href="https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang#all-or-nothing-so-let-s-do-nothing">typing system isn’t as robust
+as I would like it to be</a>, and it’s a very WET language,
+I’ve found myself reaching for it quite a bit. This is due in part
+because it has an <a href="https://go.dev/doc/tutorial/compile-install">incredible build system</a> that as a Python dev,
+I’m quite jealous of. The process for deploying a CLI in Python was
+lengthy enough to warrant <a href="https://dalwilliams.com/packaging-with-poetry-and-pipx.html">its own blog post</a>, but in Go, this
+would have been as simple as <code>go build</code> . Spending <a href="https://dalwilliams.com/should-you-switch-to-manjaro-linux.html">a lot of time on
+Linux</a> does make me appreciate the value of simple installers that
+don’t require SHA checking, cmake builds with lengthy log files and not
+obtuse error messages, or having to deal with dependency management.</p>
+<p>Tying this in with the last point, one of the major reasons I like Go so
+much is how “close to the metal” it is. Speed is a nice side effect of
+this, but it also means less leaky abstractions. The only thing that’s
+really abstracted away is the details of the compiler itself, as the
+central code base is so small. Python is nearly as fast as Go when Numpy
+or CUDA are used. but the internals and dependencies are so convoluted
+that you really can’t expect to know all the calls in your PyTorch stack.
+Outside of its major use case, networking, Go is particularly good at
+CLIs, installers, TUIs, and REST APIs. For smaller CLIs, I might instead
+reach for tiangolo’s <a href="https://typer.tiangolo.com/">Typer</a>, for the following reason:</p>
+</section>
+<section id="choosing-tech">
+<h2>Choosing Tech</h2>
+<p>There are so many new libraries/languages/tools out there, that I used
+to be (and, to be honest, sometimes still are) prone to option
+paralysis. The way I’ve chosen tech has certainly changed over the years. Though
+I’m certainly an <a href="https://en.wikipedia.org/wiki/Diffusion_of_innovations">Innovator/Early
+Adopter</a> in
+Chemistry, I tend to adopt new tech slightly later. This unsurprisingly
+also also correlates with my level of education in chemistry
+vs. computer science. But, my tendency to adopt near the end of a hype
+cycle is for the very practical reason of wanting more users to find the
+sharp edges of technologies before I choose to solve my own problems
+with them. But thankfully, programming isn't just a popularity contest, and isn't even the most important factor to me, which is <strong>DOCUMENTATION</strong>. Two years ago, when I decided I wanted to work with a <a href="https://dalwilliams.com/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html">tiling window manager</a>, the most popular 'ricing' window manager was <a href="https://github.com/baskerville/bspwm">BSPWM</a> which is...rather lacking in documentation, with seemingly half of it talking about the theory behind binary space partitioning. Compare this to the tried-and-true standby of i3, which has <a href="https://i3wm.org/docs/">exceptionally clear and detailed documentation</a>. I truly can't overstate the value of clear and detailed communication in software (and hell, in life!)</p>
+</section>
+<section id="closing-thoughts">
+<h2>Closing thoughts</h2>
+<p>So I still don't have a clear direction for this website to go, so let's just settle on calling it a <strong>platform for self-expression, doubling as a mind-map of sorts</strong>. I've got several projects coming down the pipeline, so that should probably be expected before any other blog posts. One certainty is that the delay definitely won't be as long.</p>
+<p>Until next time, &amp; happy hacking!</p>
+</section>
+<!-- /content -->
+      <footer>
+        <p>Posted by <a href="https://dalwilliams.com/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2022-06-01T00:00:00-05:00">Wed 01 June 2022</time> in <a href="https://dalwilliams.com/category/blog.html">blog</a>. Tags: <a href="https://dalwilliams.com/tag/go.html">Go</a>, <a href="https://dalwilliams.com/tag/linux.html">Linux</a>.</p>
+      </footer>
+    </article>
+    <nav class="m-navpanel m-col-m-2">
+      <h3>Categories</h3>
+      <ol class="m-block-bar-m">
+        <li><a href="https://dalwilliams.com/category/blog.html">blog</a></li>
+        <li><a href="https://dalwilliams.com/category/projects.html">projects</a></li>
+        <li><a href="https://dalwilliams.com/category/talks.html">talks</a></li>
+        <li><a href="https://dalwilliams.com/category/tutorial.html">tutorial</a></li>
+      </ol>
+      <h3>Tag cloud</h3>
+      <ul class="m-tagcloud">
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/airflow.html">Airflow</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/altair.html">Altair</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/aws.html">AWS</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/bash.html">Bash</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/bayesian-stats.html">Bayesian stats</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/chatbots.html">chatbots</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/chemistry.html">chemistry</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/docker.html">Docker</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/flask.html">Flask</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/gans.html">GANs</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/git.html">Git</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/go.html">Go</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/jinja.html">Jinja</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/jupyter.html">Jupyter</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/keras.html">Keras</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/latex.html">LaTeX</a></li>
+        <li class="m-tag-5"><a href="https://dalwilliams.com/tag/linux.html">Linux</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/luigi.html">Luigi</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/make.html">Make</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/microsoft.html">Microsoft</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/mongodb.html">MongoDB</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pandas.html">Pandas</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/papermill.html">Papermill</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pipx.html">pipx</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/poetry.html">Poetry</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/reproducibility.html">reproducibility</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/rest.html">REST</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/rst.html">rST</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/science-writing.html">Science Writing</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/scientific-python.html">Scientific Python</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/scikit-learn.html">SciKit Learn</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/spacy.html">Spacy</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/sqalchemy.html">SQAlchemy</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/sqlite.html">SQLite</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/swagger.html">Swagger</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/testing.html">Testing</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/tutorials.html">Tutorials</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/vaes.html">VAEs</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/vim.html">Vim</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/wild-python.html">wild python</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+</main>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>Dal's Portfolio. Powered by <a href="https://getpelican.com">Pelican</a> and <a href="https://mcss.mosra.cz">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

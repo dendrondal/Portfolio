@@ -54,83 +54,121 @@
     <div class="m-col-m-10">
       <article>
         <header>
+          <h1><a href="https://dalwilliams.com/bridging-the-temporal-chasm.html" rel="bookmark" title="Permalink to Bridging the Temporal Chasm">
+            <time class="m-date" datetime="2022-06-01T00:00:00-05:00">
+              Jun <span class="m-date-day">01</span> 2022
+            </time>
+            Bridging the Temporal Chasm
+          </a></h1>
+        </header>
+        <div class="m-clearfix-l"></div>
+<!-- content -->
+<p>So, it's clearly been awhile since I've written anything here. There are multiple reasons why this is the case. One of the main reasons
+is trying to determine in what direction this blog should go. Its
+primary goal was to serve as a portfolio, but honestly, I haven’t been
+coding that much in my spare time. This makes sense, given how much I
+code for work, and also, I’m sure both my eyes and joints are thankful
+for the fact that I try to limit my time in front of a screen. (I’d love
+to share what I’ve been working on at <a href="kebotix.com">Kebotix</a>, but that’s quite
+confidential…) Instead of being a “portfolio”, several articles, like
+the <a href="https://dalwilliams.com/tag/wild-python.html">Wild Python</a> series, served as both an excuse to get me to
+read more source code and as small tutorials into various programming
+topics. However, these articles, as well as many other programming
+tutorials, textbook and otherwise, have the issue that they go stale.
+This doesn’t matter as much for the Wild Python articles, but it very
+much matters for articles like the <a href="https://dalwilliams.com/a-wild-itertools-appeared.html">functional programming</a> and
+<a href="https://dalwilliams.com/migrating-from-keras-to-pytorch-in-2020.html">image classification</a> ones. Since this blog is <a href="https://dalwilliams.com/website-redesign.html">fully
+static</a>, and served on GitHub, there may be a way to build a CI/CD
+pipeline to fix this, but that would certainly be its own post. Also,
+there’s the question of whether a blog is even worth pursuing, or could
+I accomplish the same things in 360 characters or less?</p>
+<p>I’m going to start out with a TL;DR of some of my favorite pieces of
+tech and new principles that I’ve been working with for the last year.</p>
+<section id="first-things-first-this-article">
+<h2>First things first: this article</h2>
+<p>In all of the journal articles, preprints, and blog posts I’ve read over
+the last year, this one certainly had the biggest influence on me. It’s
+called <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">The Law of Leaky
+Abstractions</a>.
+One of the most impressive things about this article is the way it
+applies to both computer science and chemistry (and any other field in
+which abstractions are used, which is basically everything). The other
+absolutely mind blowing thing, for those who don’t plan on clicking on
+the link, is when the article was written. I thought it had been written
+last year, until he started talking about Visual Basic and Internet
+Explorer internals. He makes some rather prophetic claims about the
+future of software, which have certainly come true. This has spurred me
+on to learn a language closer to Machine Code, which brings me to:</p>
+</section>
+<section id="go">
+<h2>Go</h2>
+<p>I’m a big fan of the <a href="https://en.wikipedia.org/wiki/Unix_philosophy">Unix Philosophy</a> which can be approximated to
+“Don’t let your feature scope creep up on you.” Go very much adopts this
+principle, not trying to be everything to everyone, but fantastic for a
+subset of applications for a subset of developers. This also makes the
+language restrictive, which isn’t a bad thing, given that there’s
+effectively only one way to write something out. No, there isn’t room
+for brilliant &amp; creative one-liners (or the <a href="https://www.youtube.com/watch?v=m40YOZr1nxQ">BEAUTIFUL syntax and semantics offered by Scala</a>, but it provides the monumental
+benefit of the language easy to read (and thus, maintain). Though the
+syntax is strange to me at times, its <a href="https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang#all-or-nothing-so-let-s-do-nothing">typing system isn’t as robust
+as I would like it to be</a>, and it’s a very WET language,
+I’ve found myself reaching for it quite a bit. This is due in part
+because it has an <a href="https://go.dev/doc/tutorial/compile-install">incredible build system</a> that as a Python dev,
+I’m quite jealous of. The process for deploying a CLI in Python was
+lengthy enough to warrant <a href="https://dalwilliams.com/packaging-with-poetry-and-pipx.html">its own blog post</a>, but in Go, this
+would have been as simple as <code>go build</code> . Spending <a href="https://dalwilliams.com/should-you-switch-to-manjaro-linux.html">a lot of time on
+Linux</a> does make me appreciate the value of simple installers that
+don’t require SHA checking, cmake builds with lengthy log files and not
+obtuse error messages, or having to deal with dependency management.</p>
+<p>Tying this in with the last point, one of the major reasons I like Go so
+much is how “close to the metal” it is. Speed is a nice side effect of
+this, but it also means less leaky abstractions. The only thing that’s
+really abstracted away is the details of the compiler itself, as the
+central code base is so small. Python is nearly as fast as Go when Numpy
+or CUDA are used. but the internals and dependencies are so convoluted
+that you really can’t expect to know all the calls in your PyTorch stack.
+Outside of its major use case, networking, Go is particularly good at
+CLIs, installers, TUIs, and REST APIs. For smaller CLIs, I might instead
+reach for tiangolo’s <a href="https://typer.tiangolo.com/">Typer</a>, for the following reason:</p>
+</section>
+<section id="choosing-tech">
+<h2>Choosing Tech</h2>
+<p>There are so many new libraries/languages/tools out there, that I used
+to be (and, to be honest, sometimes still are) prone to option
+paralysis. The way I’ve chosen tech has certainly changed over the years. Though
+I’m certainly an <a href="https://en.wikipedia.org/wiki/Diffusion_of_innovations">Innovator/Early
+Adopter</a> in
+Chemistry, I tend to adopt new tech slightly later. This unsurprisingly
+also also correlates with my level of education in chemistry
+vs. computer science. But, my tendency to adopt near the end of a hype
+cycle is for the very practical reason of wanting more users to find the
+sharp edges of technologies before I choose to solve my own problems
+with them. But thankfully, programming isn't just a popularity contest, and isn't even the most important factor to me, which is <strong>DOCUMENTATION</strong>. Two years ago, when I decided I wanted to work with a <a href="https://dalwilliams.com/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html">tiling window manager</a>, the most popular 'ricing' window manager was <a href="https://github.com/baskerville/bspwm">BSPWM</a> which is...rather lacking in documentation, with seemingly half of it talking about the theory behind binary space partitioning. Compare this to the tried-and-true standby of i3, which has <a href="https://i3wm.org/docs/">exceptionally clear and detailed documentation</a>. I truly can't overstate the value of clear and detailed communication in software (and hell, in life!)</p>
+</section>
+<section id="closing-thoughts">
+<h2>Closing thoughts</h2>
+<p>So I still don't have a clear direction for this website to go, so let's just settle on calling it a <strong>platform for self-expression, doubling as a mind-map of sorts</strong>. I've got several projects coming down the pipeline, so that should probably be expected before any other blog posts. One certainty is that the delay definitely won't be as long.</p>
+<p>Until next time, &amp; happy hacking!</p>
+</section>
+<!-- /content -->
+        <footer>
+          <p>Posted by <a href="https://dalwilliams.com/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2022-06-01T00:00:00-05:00">Wed 01 June 2022</time> in <a href="https://dalwilliams.com/category/blog.html">blog</a>. Tags: <a href="https://dalwilliams.com/tag/go.html">Go</a>, <a href="https://dalwilliams.com/tag/linux.html">Linux</a>.</p>
+        </footer>
+      </article>
+      <article>
+        <header>
           <h1><a href="https://dalwilliams.com/packaging-with-poetry-and-pipx.html" rel="bookmark" title="Permalink to Packaging with Poetry and Pipx!">
             <time class="m-date" datetime="2020-10-16T00:00:00-05:00">
               Oct <span class="m-date-day">16</span> 2020
             </time>
             Packaging with Poetry and Pipx!
           </a></h1>
+          <p>Ask most Python devs the largest shortcoming of the language, and they'll most likely say one of two things: the lack of <a href="https://talkpython.fm/episodes/show/245/python-packaging-landscape-in-2020">mobile presence</a> or the difficulties with packaging. It's easy to be jealous of Go/Rust programmers' ability to package everything into a binary install, or C# devs putting …</p>
         </header>
-        <div class="m-clearfix-l"></div>
-<!-- content -->
-<p>Ask most Python devs the largest shortcoming of the language, and they'll most likely say one of two things: the lack of <a href="https://talkpython.fm/episodes/show/245/python-packaging-landscape-in-2020">mobile presence</a> or the difficulties with packaging. It's easy to be jealous of Go/Rust programmers' ability to package everything into a binary install, or C# devs putting their app into an exe. Python may not have this luxury, but that doesn't negate its ability to make clean, intuitive CLIs in a short period of time.</p>
-<p>The versioning difficulties are compounded when you try to share your creation with a non-technical audience. It's unreasonable to expect your end-users to have modern Python installed, or to even know what that is in the first place. However, even scientists who have never coded in their life probably have experience with scripting via Excel, LabView, Origin, Igor, or many other macro-based apps. As I couldn't find a tutorial on this exact topic when packaging several tools I wrote for my graduate work, I decided to write one for future devs/scientists trying to do the same.</p>
-<section id="two-solutions">
-<h2>Two solutions</h2>
-<p>This can be solved by either a lightweight or more versatile heavyweight approach. The lightweight approach involves <a href="https://pipxproject.github.io/pipx/">pipx</a>, a utility that isolates a CLI and its requirements in a venv and adds them to the <cite>PATH</cite> automatically. It's pretty great at what it does, and I've found it to be the most pain-free way to install things like Black or Poetry globally without breaking any dependencies or builds.</p>
-<p>Speaking of <a href="https://python-poetry.org/">Poetry</a>, it is actually vital to both of these solutions. For those unfamiliar, Poetry is an all-in-one dependency management, venv, and packaging utility. It uses the rather friendly TOML language to define versions in a fuzzy manner, and will basically refuse to install anything if there's a version mismatch, e.g. one app requires python 3.6.4+, but the project only requires 3.6.0+. These requirements are also locked in place, so people can add dependencies asynchronously without worrying about breaking the build, because poetry will throw a ton of errors your way. It also works very nicely with <a href="https://github.com/pyenv/pyenv">pyenv</a>, and allows you to export your requirements to the classic <cite>requirements.txt</cite>.</p>
-<p>The latter is important because of the heavyweight solution: Docker. Pipx installs dependencies via pip. If you have non-pip dependencies, Docker is likely the way to go. An example in my recent past is a project that required a LaTeX install, which can be <a href="https://dalwilliams.info/lessons-learned-from-writing-a-phd-dissertation-in-markdown.html">quite painful</a> and is prone to OS-dependent errors. So, I wrapped everything up in a <a href="https://github.com/dendrondal/phd_thesis_markdown">Docker container</a>, and everything worked perfectly. However, this takes quite a bit more overhead on the end-users part, and requires more space to be used. Docker is complex enough that it would require another tutorial, but thankfully there are already many <a href="https://pythonspeed.com/">good ones</a> out there.</p>
-</section>
-<section id="packaging-testing">
-<h2>Packaging &amp; Testing</h2>
-<p>Now that we know our options, let's go through how to get this up and working. I'll be using the actual project that inspired this post, <a href="https://github.com/dendrondal/instrumentools">instrumentools</a>, as an example, but this approach should be relatively agnostic. That is, whether you use <a href="https://realpython.com/command-line-interfaces-python-argparse/">argparse</a>, <a href="https://click.palletsprojects.com/en/7.x/">click</a>, or <a href="https://typer.tiangolo.com/">typer</a> to create your CLI, these steps should serve you regardless. Let's first go through a basic idea of how to structure this project:</p>
-<pre>.
-|── poetry.lock
-|── pyproject.toml
-|── README.md
-|── instrumentools
-|   └── __init__.py
-|       CAC.py
-|       TEM.py
-|       thermal_analysis.py</pre>
-<p>The key factor is that each of your CLI components are stored in modules within the parent directory. This allows you to define them as entrypoints within your <cite>pyproject.toml</cite>:</p>
-<pre class="m-code"><span class="k">[tool.poetry.scripts]</span>
-<span class="n">tem_analysis</span> <span class="o">=</span> <span class="s">&quot;instrumentools.TEM:main&quot;</span>
-<span class="n">cac_analysis</span> <span class="o">=</span> <span class="s">&quot;instrumentools.CAC:cac_graphing&quot;</span>
-<span class="n">thermal_analysis</span> <span class="o">=</span> <span class="s">&quot;instrumentools.thermal_analysis:main&quot;</span></pre>
-<p>This creates symlinks to Python executing the <cite>main</cite> function in the <cite>cli.py</cite> file of each module. To test whether this worked, you first need to run <cite>poetry install</cite> to set up the links, and run <cite>poetry run FEATURE</cite>, where feature could be tem_analysis, cac_analysis, or thermal_analysis in the case above. Alternatively, you could use click to allow multiple entrypoints via a <a href="https://click.palletsprojects.com/en/7.x/commands/">single command line script</a>, which could be better in terms of namespace pollution. I'm sure there are also ways to do this with the other CLI software listed above.</p>
-<aside class="m-block m-primary">
-<h3>Ideally, it would make more sense to include each feature as a package rather than a module, making your project more modular and less cluttered. Unfortunately, I have not found a way to do this with Poetry's scripts command in a way that pipx understands.</h3>
-</aside>
-<p>As mentioned before, poetry makes packaging very easy. First, you should create an account on <a href="https://test.pypi.org/">test.pypi.org</a>. Just to make things easier and safer, I would recommend going to account settings and getting an API key. Back on the command line, do this:</p>
-<pre class="m-code">$ poetry config respositories.testpypi.url https://test.pypi.org/legacy/
-$ poetry config pypi-token.testpypi &lt;YOUR_API_KEY&gt;
-$ poetry publish -r testpypi --build</pre>
-<p>As of Poetry 1.0, having the legacy prefix for testpypi is important. You can view your configuration settings using <cite>poetry config --list</cite>, but your api key will be hidden. After running the final command, your package should show up on your testpypi account. You will generate both zipped source code and a <a href="https://realpython.com/python-wheels/">wheel</a> in the newly created <cite>dist</cite> folder within your repository. There are multiple ways to test whether or not this worked. Note that pipx takes awhile to sync with your remote repository, so the local version may work better in this case:</p>
-<pre class="m-code"><span class="c1"># Local installation</span>
-pipx run --spec PATH_TO_YOUR_PROJECT/dist/VERSION.whl FEATURE
-
-<span class="c1"># Remote install</span>
-pipx run WHEEL_URL FEATURE</pre>
-<p>Here, your <cite>WHEEL_URL</cite> can be found under the link for the current release, in the releases page of your project on testpypi. Registering your project to PyPi goes through a very similar process to the test server, just with pypi.org instead, so you can effectively repeat the steps above once you're comfortable with the result. Then by running <cite>pipx install instrumentools</cite>, every command works as expected. As with any programming endeavor, make sure that your code is well-documented! It's important that the end-user doesn't need to memorize commands and can get a nice set of instructions by using <cite>--help</cite>:</p>
-<pre class="m-code">Usage: cac_analysis <span class="o">[</span>OPTIONS<span class="o">]</span>
-
-Graphs .csv output from Bruker UV-Vis software. Outputs stacked UV-vis
-spectra and wavelength <span class="o">(</span>or wavelength raio, depending on dye<span class="o">)</span> vs.
-log<span class="o">(</span>concentration<span class="o">)</span> spectra as .png files in the same directory as .csv
-file.
-
-Options:
-  --path PATH      Full path to .csv file
-  --wv_range TEXT  Range of wavelengths <span class="o">(</span>i.e. max - min<span class="o">)</span>
-  --min_conc TEXT  Minimum concentration, in mg/mL
-  --max_conc TEXT  Maximum concentration, in mg/mL
-  --step TEXT      Total number of samples in csv
-  --vb1 TEXT       Lambda max/first vibronic band
-  --vb3 TEXT       If you are comparing the first and third vibronic band <span class="k">for</span>
-                   a dye, <span class="o">(</span>i.e. pyrene<span class="o">)</span>, enter it here. Otherwise, just press
-                   enter
-
-  --help           Show this message and exit.</pre>
-</section>
-<section id="closing-thoughts">
-<h2>Closing Thoughts</h2>
-<p>I hope this is a useful tutorial for anyone trying to get a CLI to a broader audience. Though most scientists are primarily used to working with a GUI-based UX, it shouldn't take long to evangelize the advantages of using CLIs for particularly tedious graph creation or simple data analysis. These tools certainly exist in the form of Origin/VBA macros, but Python tends to lend itself to much cleaner code in my personal experience. Even better, having Pipx or Docker makes software that is less likely to break down the road or break system installations.</p>
-</section>
-<!-- /content -->
         <footer>
           <p>Posted by <a href="https://dalwilliams.com/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2020-10-16T00:00:00-05:00">Fri 16 October 2020</time> in <a href="https://dalwilliams.com/category/tutorial.html">tutorial</a>. Tags: <a href="https://dalwilliams.com/tag/linux.html">Linux</a>, <a href="https://dalwilliams.com/tag/scientific-python.html">Scientific Python</a>, <a href="https://dalwilliams.com/tag/docker.html">Docker</a>, <a href="https://dalwilliams.com/tag/poetry.html">Poetry</a>, <a href="https://dalwilliams.com/tag/pipx.html">pipx</a>, <a href="https://dalwilliams.com/tag/chemistry.html">chemistry</a>.</p>
         </footer>
+        <div class="m-clearfix-l"></div>
       </article>
       <article>
         <header>
@@ -266,83 +304,69 @@ Options:
         </footer>
         <div class="m-clearfix-l"></div>
       </article>
-      <article>
-        <header>
-          <h1><a href="https://dalwilliams.com/a-wild-itertools-appeared.html" rel="bookmark" title="Permalink to A wild itertools appeared!">
-            <time class="m-date" datetime="2019-08-23T00:00:00-05:00">
-              Aug <span class="m-date-day">23</span> 2019
-            </time>
-            A wild itertools appeared!
-          </a></h1>
-          <p>A walkthrough and deployment use cases of the itertools standard library</p>
-        </header>
-        <footer>
-          <p>Posted by <a href="https://dalwilliams.com/author/jon-steven-dal-williams.html">Jon Steven Dal Williams</a> on <time datetime="2019-08-23T00:00:00-05:00">Fri 23 August 2019</time> in <a href="https://dalwilliams.com/category/blog.html">Blog</a>. Tags: <a href="https://dalwilliams.com/tag/wild-python.html">wild python</a>, <a href="https://dalwilliams.com/tag/functional-programming.html">functional programming</a>, <a href="https://dalwilliams.com/tag/tutorials.html">tutorials</a>.</p>
-        </footer>
-        <div class="m-clearfix-l"></div>
-      </article>
       <div class="m-article-pagination">page 1 | <a href="https://dalwilliams.com/index2.html">older articles &raquo;</a></div>
     </div>
     <nav class="m-navpanel m-col-m-2">
       <h3>Categories</h3>
       <ol class="m-block-bar-m">
-        <li><a href="https://dalwilliams.com/category/blog.html">Blog</a></li>
+        <li><a href="https://dalwilliams.com/category/blog.html">blog</a></li>
         <li><a href="https://dalwilliams.com/category/projects.html">projects</a></li>
         <li><a href="https://dalwilliams.com/category/talks.html">talks</a></li>
         <li><a href="https://dalwilliams.com/category/tutorial.html">tutorial</a></li>
       </ol>
       <h3>Tag cloud</h3>
       <ul class="m-tagcloud">
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/airflow.html">Airflow</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/altair.html">Altair</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/aws.html">AWS</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/bash.html">Bash</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/bayesian-stats.html">Bayesian stats</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/chatbots.html">chatbots</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/chemistry.html">chemistry</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/cicd.html">CI/CD</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/cnns.html">CNNs</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/computer-vision.html">Computer Vision</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/css.html">CSS</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/docker.html">Docker</a></li>
-        <li class="m-tag-5"><a href="https://dalwilliams.com/tag/flask.html">Flask</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/functional-programming.html">functional programming</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/gans.html">GANs</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/git.html">Git</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/jinja.html">Jinja</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/jupyter.html">Jupyter</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/keras.html">Keras</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/latex.html">LaTeX</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/airflow.html">Airflow</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/altair.html">Altair</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/aws.html">AWS</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/bash.html">Bash</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/bayesian-stats.html">Bayesian stats</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/chatbots.html">chatbots</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/chemistry.html">chemistry</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/cicd.html">CI/CD</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/cnns.html">CNNs</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/computer-vision.html">Computer Vision</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/css.html">CSS</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/docker.html">Docker</a></li>
+        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/flask.html">Flask</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/functional-programming.html">functional programming</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/gans.html">GANs</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/git.html">Git</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/go.html">Go</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/jinja.html">Jinja</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/jupyter.html">Jupyter</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/keras.html">Keras</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/latex.html">LaTeX</a></li>
         <li class="m-tag-5"><a href="https://dalwilliams.com/tag/linux.html">Linux</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/luigi.html">Luigi</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/make.html">Make</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/markdown.html">Markdown</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/microsoft.html">Microsoft</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/mongodb.html">MongoDB</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/pandas.html">Pandas</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/papermill.html">Papermill</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/pelican.html">Pelican</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/pipx.html">pipx</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/poetry.html">Poetry</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/productivity.html">Productivity</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/pytorch.html">PyTorch</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/reproducibility.html">reproducibility</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/rest.html">REST</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/rst.html">rST</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/science-writing.html">Science Writing</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/scientific-python.html">Scientific Python</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/scikit-learn.html">SciKit Learn</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/spacy.html">Spacy</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/sqalchemy.html">SQAlchemy</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/sqlite.html">SQLite</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/swagger.html">Swagger</a></li>
-        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/tensorflow.html">TensorFlow</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/testing.html">Testing</a></li>
-        <li class="m-tag-4"><a href="https://dalwilliams.com/tag/tutorials.html">Tutorials</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/vaes.html">VAEs</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/vim.html">Vim</a></li>
-        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/wild-python.html">wild python</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/luigi.html">Luigi</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/make.html">Make</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/markdown.html">Markdown</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/microsoft.html">Microsoft</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/mission-driven-data-science.html">Mission-driven data science</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/mongodb.html">MongoDB</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pandas.html">Pandas</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/papermill.html">Papermill</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pelican.html">Pelican</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/pipx.html">pipx</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/poetry.html">Poetry</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/productivity.html">Productivity</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/pytorch.html">PyTorch</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/reproducibility.html">reproducibility</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/rest.html">REST</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/rst.html">rST</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/science-writing.html">Science Writing</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/scientific-python.html">Scientific Python</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/scikit-learn.html">SciKit Learn</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/spacy.html">Spacy</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/sqalchemy.html">SQAlchemy</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/sqlite.html">SQLite</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/swagger.html">Swagger</a></li>
+        <li class="m-tag-2"><a href="https://dalwilliams.com/tag/tensorflow.html">TensorFlow</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/testing.html">Testing</a></li>
+        <li class="m-tag-3"><a href="https://dalwilliams.com/tag/tutorials.html">Tutorials</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/vaes.html">VAEs</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/vim.html">Vim</a></li>
+        <li class="m-tag-1"><a href="https://dalwilliams.com/tag/wild-python.html">wild python</a></li>
       </ul>
     </nav>
   </div>

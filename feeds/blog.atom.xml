@@ -1,5 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - Blog</title><link href="https://dalwilliams.com/" rel="alternate"></link><link href="https://dalwilliams.com/feeds/blog.atom.xml" rel="self"></link><id>https://dalwilliams.com/</id><updated>2020-05-29T00:00:00-05:00</updated><entry><title>A Wild Hypothesis Appeared!</title><link href="https://dalwilliams.com/a-wild-hypothesis-appeared.html" rel="alternate"></link><published>2020-05-29T00:00:00-05:00</published><updated>2020-05-29T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.com,2020-05-29:/a-wild-hypothesis-appeared.html</id><summary type="html">&lt;p&gt;Part 2 of the Wild Python series, focusing on property-based testing&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dal's Portfolio - blog</title><link href="https://dalwilliams.com/" rel="alternate"></link><link href="https://dalwilliams.com/feeds/blog.atom.xml" rel="self"></link><id>https://dalwilliams.com/</id><updated>2022-06-01T00:00:00-05:00</updated><entry><title>Bridging the Temporal Chasm</title><link href="https://dalwilliams.com/bridging-the-temporal-chasm.html" rel="alternate"></link><published>2022-06-01T00:00:00-05:00</published><updated>2022-06-01T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.com,2022-06-01:/bridging-the-temporal-chasm.html</id><summary type="html">&lt;p&gt;A brief update after a long hiatus&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;So, it's clearly been awhile since I've written anything here. There are multiple reasons why this is the case. One of the main reasons
+is trying to determine in what direction this blog should go. Its
+primary goal was to serve as a portfolio, but honestly, I haven’t been
+coding that much in my spare time. This makes sense, given how much I
+code for work, and also, I’m sure both my eyes and joints are thankful
+for the fact that I try to limit my time in front of a screen. (I’d love
+to share what I’ve been working on at &lt;a href="kebotix.com"&gt;Kebotix&lt;/a&gt;, but that’s quite
+confidential…) Instead of being a “portfolio”, several articles, like
+the &lt;a href="https://dalwilliams.com/tag/wild-python.html"&gt;Wild Python&lt;/a&gt; series, served as both an excuse to get me to
+read more source code and as small tutorials into various programming
+topics. However, these articles, as well as many other programming
+tutorials, textbook and otherwise, have the issue that they go stale.
+This doesn’t matter as much for the Wild Python articles, but it very
+much matters for articles like the &lt;a href="https://dalwilliams.com/a-wild-itertools-appeared.html"&gt;functional programming&lt;/a&gt; and
+&lt;a href="https://dalwilliams.com/migrating-from-keras-to-pytorch-in-2020.html"&gt;image classification&lt;/a&gt; ones. Since this blog is &lt;a href="https://dalwilliams.com/website-redesign.html"&gt;fully
+static&lt;/a&gt;, and served on GitHub, there may be a way to build a CI/CD
+pipeline to fix this, but that would certainly be its own post. Also,
+there’s the question of whether a blog is even worth pursuing, or could
+I accomplish the same things in 360 characters or less?&lt;/p&gt;
+&lt;p&gt;I’m going to start out with a TL;DR of some of my favorite pieces of
+tech and new principles that I’ve been working with for the last year.&lt;/p&gt;
+&lt;section id="first-things-first-this-article"&gt;
+&lt;h2&gt;First things first: this article&lt;/h2&gt;
+&lt;p&gt;In all of the journal articles, preprints, and blog posts I’ve read over
+the last year, this one certainly had the biggest influence on me. It’s
+called &lt;a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/"&gt;The Law of Leaky
+Abstractions&lt;/a&gt;.
+One of the most impressive things about this article is the way it
+applies to both computer science and chemistry (and any other field in
+which abstractions are used, which is basically everything). The other
+absolutely mind blowing thing, for those who don’t plan on clicking on
+the link, is when the article was written. I thought it had been written
+last year, until he started talking about Visual Basic and Internet
+Explorer internals. He makes some rather prophetic claims about the
+future of software, which have certainly come true. This has spurred me
+on to learn a language closer to Machine Code, which brings me to:&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="go"&gt;
+&lt;h2&gt;Go&lt;/h2&gt;
+&lt;p&gt;I’m a big fan of the &lt;a href="https://en.wikipedia.org/wiki/Unix_philosophy"&gt;Unix Philosophy&lt;/a&gt; which can be approximated to
+“Don’t let your feature scope creep up on you.” Go very much adopts this
+principle, not trying to be everything to everyone, but fantastic for a
+subset of applications for a subset of developers. This also makes the
+language restrictive, which isn’t a bad thing, given that there’s
+effectively only one way to write something out. No, there isn’t room
+for brilliant &amp;amp; creative one-liners (or the &lt;a href="https://www.youtube.com/watch?v=m40YOZr1nxQ"&gt;BEAUTIFUL syntax and semantics offered by Scala&lt;/a&gt;, but it provides the monumental
+benefit of the language easy to read (and thus, maintain). Though the
+syntax is strange to me at times, its &lt;a href="https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang#all-or-nothing-so-let-s-do-nothing"&gt;typing system isn’t as robust
+as I would like it to be&lt;/a&gt;, and it’s a very WET language,
+I’ve found myself reaching for it quite a bit. This is due in part
+because it has an &lt;a href="https://go.dev/doc/tutorial/compile-install"&gt;incredible build system&lt;/a&gt; that as a Python dev,
+I’m quite jealous of. The process for deploying a CLI in Python was
+lengthy enough to warrant &lt;a href="https://dalwilliams.com/packaging-with-poetry-and-pipx.html"&gt;its own blog post&lt;/a&gt;, but in Go, this
+would have been as simple as &lt;code&gt;go build&lt;/code&gt; . Spending &lt;a href="https://dalwilliams.com/should-you-switch-to-manjaro-linux.html"&gt;a lot of time on
+Linux&lt;/a&gt; does make me appreciate the value of simple installers that
+don’t require SHA checking, cmake builds with lengthy log files and not
+obtuse error messages, or having to deal with dependency management.&lt;/p&gt;
+&lt;p&gt;Tying this in with the last point, one of the major reasons I like Go so
+much is how “close to the metal” it is. Speed is a nice side effect of
+this, but it also means less leaky abstractions. The only thing that’s
+really abstracted away is the details of the compiler itself, as the
+central code base is so small. Python is nearly as fast as Go when Numpy
+or CUDA are used. but the internals and dependencies are so convoluted
+that you really can’t expect to know all the calls in your PyTorch stack.
+Outside of its major use case, networking, Go is particularly good at
+CLIs, installers, TUIs, and REST APIs. For smaller CLIs, I might instead
+reach for tiangolo’s &lt;a href="https://typer.tiangolo.com/"&gt;Typer&lt;/a&gt;, for the following reason:&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="choosing-tech"&gt;
+&lt;h2&gt;Choosing Tech&lt;/h2&gt;
+&lt;p&gt;There are so many new libraries/languages/tools out there, that I used
+to be (and, to be honest, sometimes still are) prone to option
+paralysis. The way I’ve chosen tech has certainly changed over the years. Though
+I’m certainly an &lt;a href="https://en.wikipedia.org/wiki/Diffusion_of_innovations"&gt;Innovator/Early
+Adopter&lt;/a&gt; in
+Chemistry, I tend to adopt new tech slightly later. This unsurprisingly
+also also correlates with my level of education in chemistry
+vs. computer science. But, my tendency to adopt near the end of a hype
+cycle is for the very practical reason of wanting more users to find the
+sharp edges of technologies before I choose to solve my own problems
+with them. But thankfully, programming isn't just a popularity contest, and isn't even the most important factor to me, which is &lt;strong&gt;DOCUMENTATION&lt;/strong&gt;. Two years ago, when I decided I wanted to work with a &lt;a href="https://dalwilliams.com/going-mouseless-or-how-i-learned-to-stop-clicking-and-love-the-clack.html"&gt;tiling window manager&lt;/a&gt;, the most popular 'ricing' window manager was &lt;a href="https://github.com/baskerville/bspwm"&gt;BSPWM&lt;/a&gt; which is...rather lacking in documentation, with seemingly half of it talking about the theory behind binary space partitioning. Compare this to the tried-and-true standby of i3, which has &lt;a href="https://i3wm.org/docs/"&gt;exceptionally clear and detailed documentation&lt;/a&gt;. I truly can't overstate the value of clear and detailed communication in software (and hell, in life!)&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="closing-thoughts"&gt;
+&lt;h2&gt;Closing thoughts&lt;/h2&gt;
+&lt;p&gt;So I still don't have a clear direction for this website to go, so let's just settle on calling it a &lt;strong&gt;platform for self-expression, doubling as a mind-map of sorts&lt;/strong&gt;. I've got several projects coming down the pipeline, so that should probably be expected before any other blog posts. One certainty is that the delay definitely won't be as long.&lt;/p&gt;
+&lt;p&gt;Until next time, &amp;amp; happy hacking!&lt;/p&gt;
+&lt;/section&gt;
+</content><category term="blog"></category><category term="Go"></category><category term="Linux"></category></entry><entry><title>A Wild Hypothesis Appeared!</title><link href="https://dalwilliams.com/a-wild-hypothesis-appeared.html" rel="alternate"></link><published>2020-05-29T00:00:00-05:00</published><updated>2020-05-29T00:00:00-05:00</updated><author><name>Jon Steven Dal Williams</name></author><id>tag:dalwilliams.com,2020-05-29:/a-wild-hypothesis-appeared.html</id><summary type="html">&lt;p&gt;Part 2 of the Wild Python series, focusing on property-based testing&lt;/p&gt;
 </summary><content type="html">&lt;aside class="m-note m-default"&gt;
 &lt;h3&gt;This article presumes some familiarity with unit and functional testing, as well as pytest. Though there are many tutorials for these topics online, I found less on the Hypothesis library. Moreover, I wrote this article to gain some intuition as to &lt;em&gt;when&lt;/em&gt; to use property-based tests rather than example-based tests.&lt;/h3&gt;
 &lt;/aside&gt;
